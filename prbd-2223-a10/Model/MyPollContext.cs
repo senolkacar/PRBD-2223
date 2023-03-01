@@ -23,8 +23,8 @@ public class MyPollContext : DbContextBase {
 
     private static void SeedData(ModelBuilder modelBuilder) {
         modelBuilder.Entity<User>().HasData(
-            new User { UserId = 1, Name = "ben" },
-            new User { UserId = 2, Name = "bruno" }
+            new User { Id = 1, FullName = "ben" },
+            new User { Id = 2, FullName = "bruno" }
             );
     }
 }
