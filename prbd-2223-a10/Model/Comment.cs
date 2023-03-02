@@ -1,17 +1,28 @@
-﻿namespace MyPoll.Model;
-public class Comment {
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public int PollId { get; set; }
-    public string Text { get; set; }
-    public DateTime TimeStamp { get; set; }
+﻿using System.ComponentModel.DataAnnotations;
+using PRBD_Framework;
 
-    public Comment(int id, int userid, int pollid, string text,DateTime timestamp) {
-        Id = id;
+namespace MyPoll.Model;
+public class Comment : EntityBase<MyPollContext> {
+    public int Id { get; set; }
+    [Required]
+    public int UserId { get; set; }
+    [Required]
+    public virtual User User { get; set; }
+    [Required]
+    public int PollId { get; set; }
+    [Required]
+    public virtual Poll Poll { get; set; }
+    [Required]
+    public string Text { get; set; }
+    public DateTime Timestamp { get; set; } = DateTime.Now;
+
+    public Comment(int userid, int pollid, string text,DateTime timestamp) {
         UserId = userid;
         PollId = pollid;
         Text = text;
-        TimeStamp = timestamp;
+        Timestamp = timestamp;
     }
+
+    public Comment() { }
 
 }

@@ -1,9 +1,11 @@
 ﻿using System.Windows;
+using MyPoll.Model;
 using MyPoll.ViewModel;
+using PRBD_Framework;
 
 namespace MyPoll; 
 
-public partial class App {
+public partial class App : ApplicationBase<User,MyPollContext> {
     protected override void OnStartup(StartupEventArgs e) {
         PrepareDatabase();
     }
