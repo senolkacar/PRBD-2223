@@ -17,6 +17,7 @@ public class User : EntityBase<MyPollContext> {
     public virtual ICollection<Participation> Participations { get; set; } = new HashSet<Participation>();
     public virtual ICollection<Vote> Votes { get; set; } = new HashSet<Vote>();
 
+    public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 
     public User(string fullname, string email,string password) {
         FullName = fullname;

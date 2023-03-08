@@ -15,7 +15,7 @@ public class MyPollContext : DbContextBase {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         base.OnConfiguring(optionsBuilder);
         optionsBuilder
-            .UseSqlite("Data Source=prbd-2223-a10.db")
+            .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=prbd-2223-a10")
             .LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .UseLazyLoadingProxies(true);
@@ -25,6 +25,26 @@ public class MyPollContext : DbContextBase {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Participation>().HasKey(p => new { p.PollId, p.UserId });
         modelBuilder.Entity<Vote>().HasKey(v => new {v.UserId,v.ChoiceId });
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.User)
+            .WithMany(u => u.Comments)
+            .OnDelete(DeleteBehavior.ClientCascade);
+        modelBuilder.Entity<Vote>()
+            .HasOne(v => v.User)
+            .WithMany(u => u.Votes)
+            .OnDelete(DeleteBehavior.ClientCascade);
+        modelBuilder.Entity<Vote>()
+            .HasOne(u => u.User)
+            .WithMany(v => v.Votes)
+            .OnDelete(DeleteBehavior.ClientCascade);
+        modelBuilder.Entity<Participation>()
+            .HasOne(p => p.Poll)
+            .WithMany(pl => pl.Participations)
+            .OnDelete(DeleteBehavior.ClientCascade);
+        modelBuilder.Entity<Participation>()
+            .HasOne(p =>p.User)
+            .WithMany(u => u.Participations)
+            .OnDelete(DeleteBehavior.ClientCascade);
         SeedData(modelBuilder);
     }
     private static void SeedData(ModelBuilder modelBuilder) {
