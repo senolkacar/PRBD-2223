@@ -5,6 +5,7 @@
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
               xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
               xmlns:vm="clr-namespace:MyPoll.ViewModel"
+              xmlns:vw="clr-namespace:MyPoll.View"
               mc:Ignorable="d"
               WindowStartupLocation="CenterScreen"
               Title="MyPoll - prbd-2223-a10"
@@ -12,5 +13,9 @@
     <Window.DataContext>
         <vm:MainViewModel x:Name="vm"/>
     </Window.DataContext>
-
+    <f:MyTabControl x:Name="tabControl" Margin="10" Grid.Row="1" HasCloseButton="True">
+        <TabItem x:Name ="pollTab" Header="Polls" Tag="Polls">
+            <vw:PollView/>
+        </TabItem>
+    </f:MyTabControl>
 </f:WindowBase>
