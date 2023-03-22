@@ -41,6 +41,7 @@ public class PollViewModel: ViewModelCommon {
         var filteredPolls = from p in polls
                             where p.Creator.FullName == CurrentUser.FullName ||
                             p.Participations.Any(f => CurrentUser!=null && f.UserId == CurrentUser.Id)
+                            orderby p.Name
                              select p;
         Polls = new ObservableCollection<PollCardViewModel>(filteredPolls.Select(p => new PollCardViewModel(p)));
     }

@@ -36,8 +36,7 @@ namespace MyPoll.Model;
         public static IQueryable<Poll> GetFiltered(string Filter) {
             var filtered = from p in Context.Polls
                            where p.Name.Contains(Filter) || p.Creator.FullName.Contains(Filter)
-                       
-                           orderby p.Name
+                           orderby p.Name ascending
                            select p;
         return filtered;
         }

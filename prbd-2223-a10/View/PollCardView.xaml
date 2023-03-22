@@ -8,11 +8,33 @@
               xmlns:vw="clr-namespace:MyPoll.View"
               d:DataContext="{d:DesignInstance Type=vm:PollCardViewModel, IsDesignTimeCreatable=False}"
               mc:Ignorable="d"
-              d:DesignHeight="200" d:DesignWidth="100">
+              d:DesignHeight="200" d:DesignWidth="170">
     <StackPanel>
-        <Border CornerRadius="10" BorderBrush="White">
-            <TextBlock Background="Green" TextAlignment="Center" Text="{Binding Name}">
+        <Border CornerRadius="10" BorderBrush="White" BorderThickness="1" Background="#cc024a1a">
+            <Grid Height="200" Width="170">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" TextAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,10,10,0">
+                </TextBlock>
+                <TextBlock Grid.Row="1" TextAlignment="Center" FontSize="10" Margin="0,0,0,20">
+                    <Run Text="Created by "/><Run Text="{Binding Poll.Creator.FullName,Mode=OneWay}" FontWeight="Bold"/>
             </TextBlock>
+            <TextBlock Grid.Row="2" TextAlignment="Center" FontSize="10">
+                    <Run Text="{Binding ParticipantCount,Mode=OneWay}"/><Run Text=" participants"/>
+            </TextBlock>
+            <TextBlock Grid.Row="3" TextAlignment="Center" FontSize="10" Margin="0,0,0,20">
+                    <Run Text="{Binding VoteCount,Mode=OneWay}"/><Run Text=" votes"/>
+            </TextBlock>
+            <TextBlock Grid.Row="4" TextAlignment="Center" Text="BestChoices">
+            </TextBlock>
+        </Grid>
         </Border>
     </StackPanel>
  </f:UserControlBase>
