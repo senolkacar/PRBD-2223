@@ -9,10 +9,13 @@
              xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.DataContext>
+        <vm:PollViewModel x:Name="vm"/>
+    </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
@@ -23,7 +26,14 @@
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" FontSize="14" />
             <Button Content="Clear" Grid.Column="1" Command="{Binding ClearFilter}" Margin="5,0,0,0" />
-            <ListView ItemsSource="{Binding Polls}" Grid.Row="1" BorderBrush="Transparent" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        </Grid>
+        <ListView x:Name="listView" ItemsSource="{Binding Polls}" Grid.Row="1" BorderBrush="Transparent" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding DisplayPollDetails}"
+                                           CommandParameter="{Binding ElementName=listView, Path=SelectedItem}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel/>
@@ -36,6 +46,5 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-    </Grid>
 
 </f:UserControlBase>

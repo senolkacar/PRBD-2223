@@ -11,7 +11,7 @@
               d:DesignHeight="200" d:DesignWidth="100">
     <StackPanel>
         <Border CornerRadius="10" BorderBrush="White">
-            <TextBlock Background="Green" Text="{Binding Name}">
+            <TextBlock Background="Green" TextAlignment="Center" Text="{Binding Name}">
             </TextBlock>
         </Border>
     </StackPanel>

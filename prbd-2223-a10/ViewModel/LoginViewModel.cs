@@ -36,13 +36,13 @@ public class LoginViewModel : ViewModelCommon {
 
     private void LoginAction() {
         if (Validate()) {
-            var user = Context.Users.FirstOrDefault(u => u.Email == Email);
+            var user = Context.Users.SingleOrDefault(u => u.Email == Email);
             NotifyColleagues(App.Polls.POLL_LOGIN, user);
         }
     }
     public override bool Validate() {
         ClearErrors();
-        var user = Context.Users.FirstOrDefault(u => u.Email == Email);
+        var user = Context.Users.SingleOrDefault(u => u.Email == Email);
         string pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
         if (!Regex.IsMatch(Email, pattern)) {
             AddError(nameof(Email), "bad email format");

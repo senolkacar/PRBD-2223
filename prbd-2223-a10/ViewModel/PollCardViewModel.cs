@@ -19,6 +19,6 @@ namespace MyPoll.ViewModel;
     public string Creator => Poll.Creator.FullName;
 
     public PollCardViewModel(Poll poll) {
-        _poll = poll;
+        Poll = poll;
     }
 }

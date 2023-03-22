@@ -28,5 +28,18 @@ namespace MyPoll.Model;
             Name = name;
         }
         public Poll() { }
+
+        public static IQueryable<Poll> GetAll() {
+        return Context.Polls;
+        }
+
+        public static IQueryable<Poll> GetFiltered(string Filter) {
+            var filtered = from p in Context.Polls
+                           where p.Name.Contains(Filter) || p.Creator.FullName.Contains(Filter)
+                       
+                           orderby p.Name
+                           select p;
+        return filtered;
+        }
     }
 

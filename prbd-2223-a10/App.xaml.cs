@@ -8,7 +8,9 @@ namespace MyPoll;
 public partial class App : ApplicationBase<User,MyPollContext> {
 
     public enum Polls {
-        POLL_LOGIN
+        POLL_LOGIN,
+        POLL_DISPLAY,
+        POLL_CHANGED
     }
 
     protected override void OnStartup(StartupEventArgs e) {
