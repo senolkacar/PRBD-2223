@@ -14,6 +14,9 @@ namespace MyPoll.ViewModel;
 public class LoginViewModel : ViewModelCommon {
 
     public ICommand LoginCommand { get; set; }
+    public ICommand LoginHarry { get; set; }
+    public ICommand LoginJohn { get; set; }
+    public ICommand LoginAdmin { get; set; }
 
     private string _email;
 
@@ -32,6 +35,27 @@ public class LoginViewModel : ViewModelCommon {
     public LoginViewModel() {
         LoginCommand = new RelayCommand(LoginAction,
            () => { return _email != null && _password != null && !HasErrors; });
+        LoginHarry = new RelayCommand(LoginHarryAction);
+        LoginJohn = new RelayCommand(LoginJohnAction);
+        LoginAdmin = new RelayCommand(LoginAdminAction);
+
+    }
+
+    private void LoginHarryAction() {
+        Email = "harry@test.com";
+        Password = "harry";
+        LoginAction();
+    }
+
+    private void LoginJohnAction() {
+        Email = "john@test.com";
+        Password = "john";
+        LoginAction();
+    }
+
+    private void LoginAdminAction() {
+        Email = "admin@test.com";
+        Password = "admin";
     }
 
     private void LoginAction() {

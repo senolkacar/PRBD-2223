@@ -38,10 +38,9 @@ public class PollViewModel: ViewModelCommon {
 
     protected override void OnRefreshData() {
         IQueryable<Poll> polls = string.IsNullOrEmpty(Filter) ? Poll.GetAll() : Poll.GetFiltered(Filter);
-        var filteredPolls =  from p in polls
-                             where p.Creator.FullName == CurrentUser.FullName
-                             //p.Participations.Any(u =>CurrentUser && u.UserId == Participation)
-                             //todo : implementer les polls dont user participe
+        var filteredPolls = from p in polls
+                            where p.Creator.FullName == CurrentUser.FullName ||
+                            p.Participations.Any(f => CurrentUser!=null && f.UserId == CurrentUser.Id)
                              select p;
         Polls = new ObservableCollection<PollCardViewModel>(filteredPolls.Select(p => new PollCardViewModel(p)));
     }

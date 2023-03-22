@@ -60,9 +60,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Button Content="Login as Harry Covère (User)"></Button>
-        <Button Content="Login as John Deuf (User)" Grid.Row="1" Margin="0,10,0,0"></Button>
-        <Button Content="Login as admin (Administrator)" Grid.Row="2" Margin="0,10,0,0"></Button>
+            <Button Content="Login as Harry Covère (User)" Command="{Binding LoginHarry}"></Button>
+            <Button Content="Login as John Deuf (User)" Grid.Row="1" Margin="0,10,0,0" Command="{Binding LoginJohn}"></Button>
+            <Button Content="Login as admin (Administrator)" Grid.Row="2" Margin="0,10,0,0" Command="{Binding LoginAdmin}"></Button>
     </Grid>
     </StackPanel>
 </f:WindowBase>
