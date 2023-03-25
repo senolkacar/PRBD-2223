@@ -10,7 +10,7 @@
               mc:Ignorable="d"
               d:DesignHeight="200" d:DesignWidth="170">
     <StackPanel>
-        <Border CornerRadius="10" BorderBrush="White" BorderThickness="1" Background="#cc024a1a">
+        <Border CornerRadius="10" BorderBrush="White" BorderThickness="1" Background="{Binding PollColor}">
             <Grid Height="200" Width="170">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -32,7 +32,7 @@
             <TextBlock Grid.Row="3" TextAlignment="Center" FontSize="10" Margin="0,0,0,20">
                     <Run Text="{Binding VoteCount,Mode=OneWay}"/><Run Text=" votes"/>
             </TextBlock>
-            <TextBlock Grid.Row="4" TextAlignment="Center" Text="BestChoices">
+            <TextBlock Grid.Row="4" TextAlignment="Center" Text="BestChoices" FontWeight="Bold">
             </TextBlock>
         </Grid>
         </Border>
