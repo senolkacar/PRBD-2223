@@ -14,20 +14,39 @@
     <Border BorderBrush="Black" BorderThickness="1,0,0,1"
             SnapsToDevicePixels="True" Width="100" MinHeight="50">
         <StackPanel VerticalAlignment="Center">
-            <fa:FontAwesome Icon="{Binding VotedIcon}"
-                            Foreground="{Binding VoteColor}"
+            <fa:FontAwesome Icon="{Binding Icon}"
+                            Foreground="{Binding Color}"
                             FontSize="25"
                             Visibility="{c:Binding !EditMode}" />
 
             <Button Padding="2" BorderBrush="Transparent"
                     Visibility="{c:Binding EditMode}"
                         Background="Transparent" Width="32"
-                        Command="{Binding ChangeVotes}">
+                        Command="{Binding VoteYes}">
                 <fa:FontAwesome Icon="Solid_Check"
-                                    Foreground="Green"
+                                    Foreground="{Binding YesFgColor}"
                                     FontSize="25"
-                                    ToolTip="{Binding VoteToolTip}" />
+                                    ToolTip="{Binding YesVoteToolTip}" />
             </Button>
+            <Button Padding="2" BorderBrush="Transparent"
+                    Visibility="{c:Binding EditMode}"
+                        Background="Transparent" Width="32"
+                        Command="{Binding VoteMaybe}">
+                <fa:FontAwesome Icon="Regular_CircleQuestion"
+                                    Foreground="{Binding MaybeFgColor}"
+                                    FontSize="25"
+                                    ToolTip="{Binding MaybeVoteToolTip}" />
+            </Button>
+            <Button Padding="2" BorderBrush="Transparent"
+                    Visibility="{c:Binding EditMode}"
+                        Background="Transparent" Width="32"
+                        Command="{Binding VoteNo}">
+                <fa:FontAwesome Icon="Solid_X"
+                                    Foreground="{Binding NoFgColor}"
+                                    FontSize="25"
+                                    ToolTip="{Binding NoVoteToolTip}" />
+            </Button>
+
         </StackPanel>
     </Border>
 </f:UserControlBase>

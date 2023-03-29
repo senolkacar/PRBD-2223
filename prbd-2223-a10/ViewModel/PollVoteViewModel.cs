@@ -5,36 +5,105 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Navigation;
 using FontAwesome6;
+using Microsoft.Extensions.Logging;
 using MyPoll.Model;
 using PRBD_Framework;
 
 namespace MyPoll.ViewModel;
     public class PollVoteViewModel : ViewModelCommon {
-        public PollVoteViewModel(User participant,Choice choice) {
-            HasVoted = participant.Votes.Any(v => v.Choice.Id == choice.Id);
+    public PollVoteViewModel(User participant, Choice choice) {
+        HasVoted = participant.Votes.Any(v => v.ChoiceId == choice.Id);
+        SelectedVoteType = (from v in Context.Votes
+                            where v.ChoiceId == choice.Id && v.UserId == participant.Id
+                            select v.Type).FirstOrDefault();
+        Votes = participant.Votes.FirstOrDefault(v => v.ChoiceId == choice.Id,
+            new Vote() { User = participant, Choice = choice, Type = SelectedVoteType });
 
-            Votes = participant.Votes.FirstOrDefault(v => v.Choice.Id == choice.Id,
-                new Vote() {User = participant,Choice = choice});
-            ChangeVotes = new RelayCommand(() => HasVoted = !HasVoted);
-        }
-        public Vote Votes { get; private set; }
+        VoteYes = new RelayCommand(() => SelectedVoteType = VoteType.Yes);
+        VoteMaybe = new RelayCommand(() => SelectedVoteType = VoteType.Maybe);
+        VoteNo = new RelayCommand(() => SelectedVoteType = VoteType.No);
+    }
+    public Vote Votes { get; private set; }
         public PollVoteViewModel() { }
         private bool _editMode;
         public bool EditMode {
             get => _editMode;
             set => SetProperty(ref _editMode, value);
         }
-        public ICommand ChangeVotes { get; set; }
+
+        private VoteType _selectedVoteType;
+        public VoteType SelectedVoteType {
+            get => _selectedVoteType;
+            set {
+            if (SetProperty(ref _selectedVoteType, value)) {
+                RaisePropertyChanged(nameof(Icon));
+                RaisePropertyChanged(nameof(Color));
+                RaisePropertyChanged(nameof(YesFgColor));
+                RaisePropertyChanged(nameof(MaybeFgColor));
+                RaisePropertyChanged(nameof(NoFgColor));
+                RaisePropertyChanged(nameof(YesVoteToolTip));
+                RaisePropertyChanged(nameof(MaybeVoteToolTip));
+                RaisePropertyChanged(nameof(NoVoteToolTip));
+            }
+        }
+    }
+        
+        public ICommand VoteYes { get; set; }
+        public ICommand VoteMaybe { get; set; }
+        public ICommand VoteNo { get; set; }
         private bool _hasVoted;
         public bool HasVoted {
             get => _hasVoted;
-            set =>SetProperty(ref _hasVoted, value);
+        set {
+            if (SetProperty(ref _hasVoted, value)) {
+                RaisePropertyChanged(nameof(Icon));
+                RaisePropertyChanged(nameof(Color));
+                RaisePropertyChanged(nameof(YesFgColor));
+                RaisePropertyChanged(nameof(MaybeFgColor));
+                RaisePropertyChanged(nameof(NoFgColor));
+                RaisePropertyChanged(nameof(YesVoteToolTip));
+                RaisePropertyChanged(nameof(MaybeVoteToolTip));
+                RaisePropertyChanged(nameof(NoVoteToolTip));
+            }
         }
 
-        public EFontAwesomeIcon VotedIcon => HasVoted ? EFontAwesomeIcon.Solid_Check : EFontAwesomeIcon.None;
-        public Brush VoteColor => HasVoted ? Brushes.Green : Brushes.White;
+        }
 
-        public string VoteToolTip => HasVoted ? "Yes" : "No";
+    public EFontAwesomeIcon GetIcon() {
+        if (HasVoted && SelectedVoteType == VoteType.Yes) {
+            return EFontAwesomeIcon.Solid_Check;
+        } else if (HasVoted && SelectedVoteType == VoteType.Maybe) {
+            return EFontAwesomeIcon.Regular_CircleQuestion;
+        } else if (HasVoted && SelectedVoteType == VoteType.No) {
+            return EFontAwesomeIcon.Solid_X;
+        } else {
+            return EFontAwesomeIcon.None;
+        }
+
+    }
+
+    public Brush GetColor() {
+        if (SelectedVoteType == VoteType.Yes) {
+            return Brushes.Green;
+        } else if (SelectedVoteType == VoteType.Maybe) {
+            return Brushes.Orange;
+        } else if (SelectedVoteType == VoteType.No) {
+            return Brushes.Red;
+        } else {
+            return Brushes.White;
+        }
+    }
+
+
+    public EFontAwesomeIcon Icon => GetIcon();
+    public Brush Color => GetColor();
+    public Brush YesFgColor => HasVoted && SelectedVoteType == VoteType.Yes ? Brushes.Green : Brushes.LightGray;
+    public Brush MaybeFgColor => HasVoted && SelectedVoteType == VoteType.Maybe? Brushes.Orange : Brushes.LightGray;
+    public Brush NoFgColor => HasVoted && SelectedVoteType == VoteType.No? Brushes.Red : Brushes.LightGray;
+    public string YesVoteToolTip => "Yes";
+    public string MaybeVoteToolTip => "Maybe";
+    public string NoVoteToolTip => "No";
 
     }
