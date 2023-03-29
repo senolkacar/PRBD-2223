@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using PRBD_Framework;
 
 namespace MyPoll.Model;
@@ -22,17 +24,31 @@ namespace MyPoll.Model;
         [Required]
         public virtual User Creator { get; set; }
 
-        public virtual ICollection<Participation> Participations { get; set; } = new HashSet<Participation>(); 
+        public virtual ICollection<Participation> Participations { get; set; } = new HashSet<Participation>();
 
         public Poll(string name) {
             Name = name;
         }
-        public Poll() { }
+        public Poll() {
+            
+        }
 
         public static IQueryable<Poll> GetAll() {
         return Context.Polls;
         }
 
+        public List<Choice> GetBestChoices() {
+        var choices = Context.Choices
+         .Where(c => c.PollId == Id)
+         .ToList();
+        var maxScore = choices.Max(c => c.Score);
+        var bestChoices = choices
+            .Where(c => c.Score == maxScore)
+            .OrderByDescending(c => c.Score)
+            .ToList();
+        return bestChoices;
+    }
+        
         public static IQueryable<Poll> GetFiltered(string Filter) {
         var filtered = (from p in Context.Polls
                         join c in Context.Choices on p.Id equals c.PollId

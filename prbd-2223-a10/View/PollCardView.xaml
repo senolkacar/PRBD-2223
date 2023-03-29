@@ -8,10 +8,10 @@
               xmlns:vw="clr-namespace:MyPoll.View"
               d:DataContext="{d:DesignInstance Type=vm:PollCardViewModel, IsDesignTimeCreatable=False}"
               mc:Ignorable="d"
-              d:DesignHeight="200" d:DesignWidth="170">
+              d:DesignHeight="200" d:DesignWidth="195">
     <StackPanel>
         <Border CornerRadius="10" BorderBrush="White" BorderThickness="1" Background="{Binding PollColor}">
-            <Grid Height="200" Width="170">
+            <Grid Height="200" Width="195">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -23,18 +23,35 @@
 
                 <TextBlock Text="{Binding Name}" TextWrapping="Wrap" TextAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,10,10,0">
                 </TextBlock>
-                <TextBlock Grid.Row="1" TextAlignment="Center" FontSize="10" Margin="0,0,0,20">
+                <TextBlock Grid.Row="1" TextAlignment="Center" FontSize="10" Margin="0,0,0,10">
                     <Run Text="Created by "/><Run Text="{Binding Poll.Creator.FullName,Mode=OneWay}" FontWeight="Bold"/>
             </TextBlock>
             <TextBlock Grid.Row="2" TextAlignment="Center" FontSize="10">
                     <Run Text="{Binding ParticipantCount,Mode=OneWay}"/><Run Text=" participants"/>
             </TextBlock>
-            <TextBlock Grid.Row="3" TextAlignment="Center" FontSize="10" Margin="0,0,0,20">
+            <TextBlock Grid.Row="3" TextAlignment="Center" FontSize="10" Margin="0,0,0,10">
                     <Run Text="{Binding VoteCount,Mode=OneWay}"/><Run Text=" votes"/>
+                    <TextBlock Text="{Binding Score}"></TextBlock>
             </TextBlock>
-            <TextBlock Grid.Row="4" TextAlignment="Center" Text="BestChoices" FontWeight="Bold">
+            <TextBlock Grid.Row="4" TextAlignment="Center" Text="{Binding ChoiceTitle}" FontWeight="Bold">
             </TextBlock>
-        </Grid>
+                <ItemsControl Grid.Row="5" ItemsSource="{Binding BestChoices}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Margin="10,0,10,0">
+                                    <Run Text="{Binding Label,Mode=OneWay}"></Run><Run Text=" ("></Run><Run Text="{Binding Score,Mode=OneWay}"/><Run Text=")"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
         </Border>
     </StackPanel>
  </f:UserControlBase>
