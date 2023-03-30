@@ -79,9 +79,12 @@ namespace MyPoll.ViewModel;
 
     private void Save() {
         EditMode = false;
-        Participant.Votes = PollVoteVM.Where(v => v.HasVoted).Select(v=>v.Votes).ToList();
+        var votesToUpdate = PollVoteVM.Where(v => v.HasVoted).Select(v => v.Votes).ToList();
+        var existingVotes = Participant.Votes.Where(v => !votesToUpdate.Contains(v)).ToList();
+        Participant.Votes = existingVotes.Concat(votesToUpdate).ToList();
         Context.SaveChanges();
         RefreshVotes(Poll);
+        NotifyColleagues(App.Polls.POLL_CHANGED,Poll);
     }
 
     private void Cancel() {

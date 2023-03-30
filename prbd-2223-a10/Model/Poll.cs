@@ -40,7 +40,8 @@ namespace MyPoll.Model;
 
         public List<Choice> GetChoices() {
         var choices = Context.Choices
-            .Where(c=> c.PollId ==  Id)
+            .Where(c=> c.PollId == Id)
+            .OrderBy(c=>c.Label)
             .ToList();
         return choices;
         }
