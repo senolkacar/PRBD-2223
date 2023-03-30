@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using MyPoll.Model;
@@ -45,6 +46,15 @@ public class PollChoicesViewModel : ViewModelCommon {
         foreach (var p in ParticipantVM) {
             p.Changes();
         }
+    }
+
+    public List<Comment> Comments => GetComments();
+
+    public List<Comment> GetComments() {
+        var list = Context.Comments
+            .Where(c=>c.PollId == Poll.Id)
+            .ToList();
+        return list;
     }
 
     public PollChoicesViewModel() {
