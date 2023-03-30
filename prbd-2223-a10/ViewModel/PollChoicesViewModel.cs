@@ -19,7 +19,7 @@ public class PollChoicesViewModel : ViewModelCommon {
                             orderby u.FullName ascending
                             select u).ToList();
 
-        _participantVM = participants.Select(p => new PollParticipantChoicesViewModel(this, p, _choices)).ToList();
+        _participantVM = participants.Select(p => new PollParticipantChoicesViewModel(this, p, poll)).ToList();
     }
 
     private bool _editMode;

@@ -12,11 +12,11 @@ using PRBD_Framework;
 namespace MyPoll.ViewModel;
     public class PollParticipantChoicesViewModel : ViewModelCommon {
 
-        public PollParticipantChoicesViewModel(PollChoicesViewModel pollChoicesViewModel,User participant,List<Choice> choices) {
+        public PollParticipantChoicesViewModel(PollChoicesViewModel pollChoicesViewModel,User participant,Poll poll) {
             _pollChoicesViewModel = pollChoicesViewModel;
-            _choices = choices;
+            _poll = poll;
             Participant = participant;
-            RefreshVotes();
+            RefreshVotes(Poll);
 
             EditCommand = new RelayCommand(() => EditMode = true);
             SaveCommand = new RelayCommand(Save);
@@ -31,7 +31,14 @@ namespace MyPoll.ViewModel;
         public ICommand CancelCommand { get; }
         public ICommand DeleteCommand { get; }
 
-        private List<Choice> _choices;
+
+        public List<Choice> choices => Poll.GetChoices();
+
+        private Poll _poll;
+
+        public Poll Poll {
+            get => _poll;
+        }
 
         public User Participant { get; }
 
@@ -52,8 +59,10 @@ namespace MyPoll.ViewModel;
             RaisePropertyChanged(nameof(Editable));
         }
 
-        public bool Editable => !EditMode && !ParentEditMode;
+        public bool Editable => !EditMode && !ParentEditMode && UserConnected;
         public bool ParentEditMode => _pollChoicesViewModel.EditMode;
+
+        public bool UserConnected => Participant.Id == CurrentUser.Id;
 
         private List<PollVoteViewModel> _pollVoteVM = new();
 
@@ -62,8 +71,8 @@ namespace MyPoll.ViewModel;
         private set => SetProperty(ref _pollVoteVM, value);
     }
 
-    public void RefreshVotes() {
-        PollVoteVM = _choices
+    public void RefreshVotes(Poll poll) {
+        PollVoteVM = poll.GetChoices()
             .Select(c => new PollVoteViewModel(Participant,c))
             .ToList();
     }
@@ -72,18 +81,18 @@ namespace MyPoll.ViewModel;
         EditMode = false;
         Participant.Votes = PollVoteVM.Where(v => v.HasVoted).Select(v=>v.Votes).ToList();
         Context.SaveChanges();
-        RefreshVotes();
+        RefreshVotes(Poll);
     }
 
     private void Cancel() {
         EditMode = false;
-        RefreshVotes();
+        RefreshVotes(Poll);
     }
 
     private void Delete() {
         Participant.Votes.Clear();
         Context.SaveChanges();
-        RefreshVotes();
+        RefreshVotes(Poll);
     }
 
 

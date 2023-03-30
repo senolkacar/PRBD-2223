@@ -13,7 +13,7 @@ using PRBD_Framework;
 
 namespace MyPoll.ViewModel;
     public class PollVoteViewModel : ViewModelCommon {
-    public PollVoteViewModel(User participant, Choice choice) {
+    public PollVoteViewModel(User participant,Choice choice) {
         HasVoted = participant.Votes.Any(v => v.ChoiceId == choice.Id);
         SelectedVoteType = (from v in Context.Votes
                             where v.ChoiceId == choice.Id && v.UserId == participant.Id
@@ -21,9 +21,9 @@ namespace MyPoll.ViewModel;
         Votes = participant.Votes.FirstOrDefault(v => v.ChoiceId == choice.Id,
             new Vote() { User = participant, Choice = choice, Type = SelectedVoteType });
 
-        VoteYes = new RelayCommand(() => SelectedVoteType = VoteType.Yes);
-        VoteMaybe = new RelayCommand(() => SelectedVoteType = VoteType.Maybe);
-        VoteNo = new RelayCommand(() => SelectedVoteType = VoteType.No);
+        VoteYes = new RelayCommand(() => SetYes() );
+        VoteMaybe = new RelayCommand(() => SetMaybe());
+        VoteNo = new RelayCommand(() => SetNo());
     }
     public Vote Votes { get; private set; }
         public PollVoteViewModel() { }
@@ -48,6 +48,24 @@ namespace MyPoll.ViewModel;
                 RaisePropertyChanged(nameof(NoVoteToolTip));
             }
         }
+    }
+
+        public void SetYes() {
+            SelectedVoteType = VoteType.Yes;
+            HasVoted = !HasVoted;
+            Votes.Type = VoteType.Yes;
+        }
+
+        public void SetMaybe() {
+            SelectedVoteType = VoteType.Maybe;
+            HasVoted = !HasVoted;
+            Votes.Type = VoteType.Maybe;
+    }
+
+        public void SetNo() {
+            SelectedVoteType = VoteType.No;
+            HasVoted = !HasVoted;
+            Votes.Type = VoteType.No;
     }
         
         public ICommand VoteYes { get; set; }

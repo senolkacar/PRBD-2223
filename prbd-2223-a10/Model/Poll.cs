@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using PRBD_Framework;
+using static MyPoll.App;
 
 namespace MyPoll.Model;
 
@@ -35,6 +36,13 @@ namespace MyPoll.Model;
 
         public static IQueryable<Poll> GetAll() {
         return Context.Polls;
+        }
+
+        public List<Choice> GetChoices() {
+        var choices = Context.Choices
+            .Where(c=> c.PollId ==  Id)
+            .ToList();
+        return choices;
         }
 
         public List<Choice> GetBestChoices() {
