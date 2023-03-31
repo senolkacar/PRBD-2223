@@ -10,6 +10,7 @@ public partial class App : ApplicationBase<User,MyPollContext> {
     public enum Polls {
         POLL_LOGIN,
         POLL_DISPLAY,
+        POLL_ADD,
         POLL_CHANGED
     }
 

@@ -1,6 +1,7 @@
 ﻿using PRBD_Framework;
 using MyPoll.Model;
 using System.Windows.Controls;
+using static MyPoll.App;
 
 namespace MyPoll.View;
 
@@ -9,6 +10,7 @@ public partial class MainView : WindowBase {
         InitializeComponent();
         Register<Poll>(App.Polls.POLL_DISPLAY,
             poll => DisplayPoll(poll));
+        Register<User>(App.Polls.POLL_ADD,CurrentUser=>CreatePoll());
         
     }
 
@@ -16,6 +18,10 @@ public partial class MainView : WindowBase {
         if (poll != null) {
             OpenTab(poll.Name,poll.Name,()=>new PollChoicesView(poll));
         }
+    }
+
+    private void CreatePoll() {
+        OpenTab("<New Poll>", "<New Poll>",() => new CreatePollView());
     }
 
     private void OpenTab(string header, string tag, Func<UserControlBase> createView) {
@@ -27,12 +33,6 @@ public partial class MainView : WindowBase {
         }
     }
 
-    private void RenameTab(string header) {
-        if(tabControl.SelectedItem is TabItem tab) {
-            MyTabControl.RenameTab(tab, header);
-            tab.Tag = header;
-        }
-    }
 
  
 }

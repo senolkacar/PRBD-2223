@@ -26,8 +26,13 @@ public class PollViewModel: ViewModelCommon {
     public ICommand ClearFilter { get; set; }
     public ICommand DisplayPollDetails { get; set; }
 
+    public ICommand CreatePoll{ get; set; }
+
     public PollViewModel(): base() {
         OnRefreshData();
+
+        CreatePoll = new RelayCommand(() => NotifyColleagues(App.Polls.POLL_ADD, CurrentUser));
+
         ClearFilter = new RelayCommand(() => Filter = "");
 
         DisplayPollDetails = new RelayCommand<PollCardViewModel>(vm => {
