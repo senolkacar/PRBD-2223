@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vw="clr-namespace:MyPoll.View"
         xmlns:vm="clr-namespace:MyPoll.ViewModel"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
         mc:Ignorable="d">
 
@@ -74,15 +75,15 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <TextBlock Text="Comments" FontSize="14" FontWeight="Bold" Margin="0,10,0,0"></TextBlock>
-            <TextBlock><Hyperlink><Run Text="Add Comment"/></Hyperlink></TextBlock>
+            <TextBlock Visibility="{c:Binding !AddCommentVisibility}"><Hyperlink Command="{Binding AddComment}"><Run Text="Add Comment"/></Hyperlink></TextBlock>
 
-            <Grid Margin="0,0,0,5">
+            <Grid Margin="0,0,0,5" Visibility="{c:Binding AddCommentVisibility}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="CommentBox" Width="Auto" Height="50" Margin="0,0,5,0" HorizontalAlignment="Stretch"/>
-                <Button Content="Add Comment" Height="30" Grid.Column="1" VerticalAlignment="Top"/>
+                <TextBox x:Name="CommentBox" Text="{Binding CommentTxt, UpdateSourceTrigger=PropertyChanged}" Width="Auto" Height="50" Margin="0,0,5,0" HorizontalAlignment="Stretch"/>
+                <Button Content="Add Comment" Command="{Binding NewComment}" Height="30" Grid.Column="1" VerticalAlignment="Top"/>
             </Grid>
 
             <Border BorderThickness="0,0,0,1" BorderBrush="Gray"/>
