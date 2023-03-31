@@ -45,13 +45,14 @@ public class PollChoicesViewModel : ViewModelCommon {
 
     public ICommand AddComment => new RelayCommand(() => AddCommentVisibility = true);
 
-    public ICommand NewComment => new RelayCommand(() => AddNewComment());
-
+   
     private string _commentTxt;
     public string CommentTxt {
         get => _commentTxt;
         set => SetProperty(ref _commentTxt, value);
     }
+
+    public ICommand NewComment => new RelayCommand(AddNewComment, () => { return !String.IsNullOrEmpty(_commentTxt); });
 
     public string PollName => Poll.Name;
 
@@ -63,6 +64,7 @@ public class PollChoicesViewModel : ViewModelCommon {
     public Poll Poll => _poll;
 
     public void AddNewComment() {
+        if(!String.IsNullOrEmpty(CommentTxt)) { 
         Comment comment = new Comment {
             UserId = CurrentUser.Id,
             PollId = Poll.Id,
@@ -71,8 +73,10 @@ public class PollChoicesViewModel : ViewModelCommon {
         };
         Context.Add(comment);
         Context.SaveChanges();
+        CommentTxt = "";
         UpdateComments();
         AddCommentVisibility = false;
+        }
     }
 
     public void UpdateComments() {
