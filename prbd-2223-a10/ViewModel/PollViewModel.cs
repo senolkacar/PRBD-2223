@@ -31,7 +31,7 @@ public class PollViewModel: ViewModelCommon {
     public PollViewModel(): base() {
         OnRefreshData();
 
-        CreatePoll = new RelayCommand(() => NotifyColleagues(App.Polls.POLL_ADD, CurrentUser));
+        CreatePoll = new RelayCommand(() => NotifyColleagues(App.Polls.POLL_ADD, new Poll()));
 
         ClearFilter = new RelayCommand(() => Filter = "");
 

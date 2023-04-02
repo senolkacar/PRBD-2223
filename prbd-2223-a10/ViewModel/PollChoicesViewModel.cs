@@ -23,6 +23,8 @@ public class PollChoicesViewModel : ViewModelCommon {
                             select u).ToList();
 
         _participantVM = participants.Select(p => new PollParticipantChoicesViewModel(this, p, poll)).ToList();
+
+        EditPoll = new RelayCommand(() => NotifyColleagues(App.Polls.POLL_EDIT, _poll));
     }
 
     private bool _editMode;
@@ -45,6 +47,10 @@ public class PollChoicesViewModel : ViewModelCommon {
 
     public ICommand AddComment => new RelayCommand(() => AddCommentVisibility = true);
 
+    public ICommand EditPoll { get; set; }
+
+
+    public ICommand DeletePoll;
    
     private string _commentTxt;
     public string CommentTxt {
@@ -103,8 +109,12 @@ public class PollChoicesViewModel : ViewModelCommon {
         return list;
     }
 
-    public PollChoicesViewModel() {
+    protected override void OnRefreshData() {
 
+    }
+
+    public PollChoicesViewModel() {
+        
     }
 }
 

@@ -22,5 +22,6 @@ namespace MyPoll.View {
             InitializeComponent();
             DataContext = new PollChoicesViewModel(poll);
         }
+
     }
 }

@@ -11,6 +11,7 @@ public partial class App : ApplicationBase<User,MyPollContext> {
         POLL_LOGIN,
         POLL_DISPLAY,
         POLL_ADD,
+        POLL_EDIT,
         POLL_CHANGED
     }
 

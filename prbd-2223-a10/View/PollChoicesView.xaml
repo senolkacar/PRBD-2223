@@ -91,7 +91,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
-                            <TextBlock>
+                            <TextBlock MaxWidth="800" TextWrapping="Wrap">
                             <Run Text="{Binding Text}"></Run><LineBreak/>
                             <Run Text="- "/><Run Text="{Binding User.FullName,StringFormat='{}{0}\, '}" Foreground="Blue"/><Run Text="{Binding Timestamp,StringFormat='dd-MM-yy hh:mm:ss'}" Foreground="Gray"/>
                             </TextBlock>
@@ -99,6 +99,11 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <DockPanel HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button Content="Edit" Width="75" Command="{Binding EditPoll}" />
+                <Button x:Name="deletePoll" HorizontalAlignment="Right" Content="Delete" Width="75"/>
+            </DockPanel>
+           
         </StackPanel>
     </ScrollViewer>
 </f:UserControlBase>

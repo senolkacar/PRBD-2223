@@ -23,8 +23,6 @@ public class Choice : EntityBase<MyPollContext> {
         Label= label;
     }
 
-    
-
     public double GetScore() {
         var TotalVotes = Context.Votes.Where(v => v.ChoiceId == Id);
         int yesCount = TotalVotes.Count(v=>v.Type == VoteType.Yes);

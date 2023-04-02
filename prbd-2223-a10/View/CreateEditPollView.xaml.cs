@@ -12,14 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PRBD_Framework;
+using MyPoll.Model;
+using MyPoll.ViewModel;
 
 namespace MyPoll.View;
 
-    public partial class CreatePollView : UserControlBase
+    public partial class CreateEditPollView : UserControlBase
     {
-        public CreatePollView()
+        public CreateEditPollView(Poll poll,bool isNew)
         {
             InitializeComponent();
+            DataContext = new CreateEditPollViewModel(poll,isNew);
         }
     }
 
