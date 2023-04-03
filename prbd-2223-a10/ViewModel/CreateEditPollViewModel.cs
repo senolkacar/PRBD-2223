@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -7,6 +8,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Castle.Components.DictionaryAdapter.Xml;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using MyPoll.Model;
@@ -16,9 +19,19 @@ using static MyPoll.App;
 namespace MyPoll.ViewModel;
 
 public class CreateEditPollViewModel : ViewModelCommon {
-    public CreateEditPollViewModel(Poll poll,bool isNew) {
+    public CreateEditPollViewModel(Poll poll, bool isNew) {
         Poll = poll;
         IsNew = isNew;
+        Users = new ObservableCollection<User>(AllUsers);
+        Participants = new ObservableCollection<User>(GetParticipants());
+        Choices = new ObservableCollection<Choice>(GetChoices());
+        UserRemainFromList = Users.Count() > 0 ? true : false;
+        NoChoice = IsNew ? "hidden" : Choices.Count > 0 ? "visible" : "hidden";
+        NoParticipant = IsNew ? "hidden" : Participants.Count() > 0 ? "visible" : "hidden";
+        MyParticipation = Context.Participations.Any(p => p.UserId == CurrentUser.Id && p.PollId == Poll.Id) ? false : true;
+        Save = new RelayCommand(SaveAction, CanSaveAction);
+        Cancel = new RelayCommand(CancelAction);
+        Delete = new RelayCommand(DeleteAction, () => !IsNew);
         RaisePropertyChanged();
     }
     private Poll _poll;
@@ -33,33 +46,85 @@ public class CreateEditPollViewModel : ViewModelCommon {
         set => SetProperty(ref _isNew, value);
     }
 
-    
+    private string _noChoice;
+    public String NoChoice {
+        get => _noChoice;
+        set => SetProperty(ref _noChoice, value);
+    }
+
+    private bool _userRemainFromList;
+    public bool UserRemainFromList {
+        get => _userRemainFromList;
+        set => SetProperty(ref _userRemainFromList, value);
+    }
+
+    private string _noParticipant;
+    public string NoParticipant {
+        get => _noParticipant;
+        set => SetProperty(ref _noParticipant, value);
+    }
+
+    private bool _myParticipation;
+    public bool MyParticipation {
+        get => _myParticipation;
+        set => SetProperty(ref _myParticipation, value);
+    }
+
+    private ObservableCollection<User> _participants;
+    public ObservableCollection<User> Participants {
+        get => _participants;
+        set => SetProperty(ref _participants, value);
+    }
+
+    private ObservableCollection<User> _users;
+    public ObservableCollection<User> Users {
+        get => _users;
+        set => SetProperty(ref _users, value);
+    }
+
+    public string Name {
+        get => Poll?.Name;
+        set => SetProperty(Poll.Name, value, Poll, (p, v) => { p.Name = v;
+            //NotifyColleagues(App.Polls.POLL_NAME_CHANGED, Poll);
+        });
+
+    }
+
+    private ObservableCollection<Choice> _choices;
+    public ObservableCollection<Choice> Choices {
+        get => _choices;
+        set => SetProperty(ref _choices, value);
+    }
+
+    public ICommand Save { get; set; }
+    public ICommand Cancel { get; set; }
+    public ICommand Delete { get; set; }
+
     public CreateEditPollViewModel() { }
 
     public string Creator => IsNew ? CurrentUser.FullName : Poll.Creator.FullName;
 
-    public string PollName => IsNew ? "" : Poll.Name;
+    public string PollName => IsNew ? "<New Poll>" : Poll.Name;
 
-    public List<User> Participants => IsNew ? new List<User>() : GetParticipants();
 
     public List<User> GetParticipants() {
         var list = (from u in Context.Users
                     join p in Context.Participations on u.Id equals p.UserId
                     where p.PollId == Poll.Id
+                    orderby u.FullName ascending
                     select u).Distinct().ToList();
         return list;
     }
 
-    public List<User> Users => GetUsers().Where(p => !GetParticipants().Any(u => u.Id == p.Id)).ToList();
+    public List<User> AllUsers => GetUsers().Where(p => !GetParticipants().Any(u => u.Id == p.Id)).ToList();
 
     public List<User> GetUsers() {
         var list = (from u in Context.Users
-                    where !(u is Administrator)
-                   select u).ToList();
+                    orderby u.FullName ascending
+                    select u).ToList();
         return list;
     }
 
-    public List<Choice> Choices => IsNew ? new List<Choice>() : GetChoices();
 
     public List<Choice> GetChoices() {
         var list = (from c in Context.Choices
@@ -83,47 +148,116 @@ public class CreateEditPollViewModel : ViewModelCommon {
         if (SelectedUser != null && !isParticipant(SelectedUser.Id)) {
             var p = new Participation { PollId = Poll.Id, UserId = SelectedUser.Id };
             Context.Participations.Add(p);
-            Context.SaveChanges();
-            RaisePropertyChanged();
+
+            if (SelectedUser.Id == CurrentUser.Id) {
+                MyParticipation = false;
+            }
+            Participants.Add(SelectedUser);
+            Users.Remove(SelectedUser);
+            if (Users.Count == 0) {
+                UserRemainFromList = false;
+            }
+            NoParticipant = "visible";
+
+            RaisePropertyChanged(nameof(Participants), nameof(NoParticipant), nameof(Users), nameof(MyParticipation), nameof(UserRemainFromList));
         }
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
+
 
     }
 
     public bool isParticipant(int userId) {
         return Context.Participations.Any(p => p.UserId == userId && p.PollId == Poll.Id);
     }
-    public bool MyParticipation => Context.Participations.Any(p => p.UserId == CurrentUser.Id && p.PollId == Poll.Id) ? false : true;
-   
+
     public ICommand AddMyself => new RelayCommand(() => addMyself());
     public void addMyself() {
         if (Context.Participations.Any(p => p.UserId == CurrentUser.Id)) {
             var p = new Participation { PollId = Poll.Id, UserId = CurrentUser.Id };
             Context.Participations.Add(p);
-            Context.SaveChanges();
-            RaisePropertyChanged(nameof(MyParticipation),nameof(Participants),nameof(Users));
+            Participants.Add(CurrentUser);
+            Users.Remove(CurrentUser);
+            MyParticipation = false;
+            if (Users.Count == 0) {
+                UserRemainFromList = false;
+            }
+            NoParticipant = "visible";
+            RaisePropertyChanged(nameof(MyParticipation),nameof(NoParticipant), nameof(Participants), nameof(Users));
         }
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
     }
-    public bool UserRemainFromList => GetParticipants().Count() == GetUsers().Count() ? false : true; 
 
 
-    public ICommand AddEveryBody => new RelayCommand(()=>addEverybody());
+    private string _choice;
+
+    public string Choice {
+        get => _choice;
+        set => SetProperty(ref _choice, value);
+    }
+
+    public bool isChoiceNull => Choice.IsNullOrEmpty() ? false : true;
+    public ICommand AddChoice => new RelayCommand(() => addChoice());
+    public void addChoice() {
+        if (!Choice.IsNullOrEmpty()) {
+            Choice choice = new Choice(Poll.Id, Choice);
+            Context.Choices.Add(choice);
+            Choices.Add(choice);
+            Choice = "";
+            NoChoice = "visible";
+            RaisePropertyChanged(nameof(Choices));
+        }
+    }
+    public ICommand AddEveryBody => new RelayCommand(() => addEverybody());
 
     public void addEverybody() {
-        var pollParticipants = Context.Participations.Where(p => p.PollId == Poll.Id).ToList();
-        var users = GetUsers();
-        foreach (User u in users) {
-            if (!pollParticipants.Any(p => p.UserId == u.Id)) {
+        var pollParticipants = Participants.ToList();
+        foreach (User u in Users) {
+            if (!pollParticipants.Any(p => p.Id == u.Id)) {
                 var p = new Participation { PollId = Poll.Id, UserId = u.Id };
+                Participants.Add(u);
                 Context.Participations.Add(p);
+                Users = new ObservableCollection<User>();
+
             }
+        }
+        UserRemainFromList = false;
+        MyParticipation = false;
+        NoParticipant = "visible";
+        NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
+        RaisePropertyChanged(nameof(UserRemainFromList), nameof(Participants), nameof(NoParticipant),nameof(Users), nameof(MyParticipation));
+    }
+    public override void SaveAction() {
+        //throw pollid exception for new poll
+        if (IsNew) {
+            Context.Add(new Poll(Name));
+            IsNew = false;
         }
         Context.SaveChanges();
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
-        RaisePropertyChanged(nameof(UserRemainFromList),nameof(Participants),nameof(Users));
     }
 
+    //cansaveaction is not tracking the poll's modification status correctly
+    private bool CanSaveAction() {
+        if (IsNew)
+            return !string.IsNullOrEmpty(Name);
+        return !Poll.IsModified;
+    }
+    public override void CancelAction() {
+        Context.Entry(Poll).State = EntityState.Detached;
+        Context.Entry(Poll).Reload();
+        NotifyColleagues(App.Polls.POLL_CLOSE_TAB, Poll);
+        RaisePropertyChanged();
+    }
+
+
+    private void DeleteAction() {
+        CancelAction();
+        Context.Polls.Remove(Poll);
+        NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
+        NotifyColleagues(App.Polls.POLL_CLOSE_TAB, Poll);
+    }
+
+   
 }
 
    

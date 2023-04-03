@@ -26,4 +26,11 @@ public class User : EntityBase<MyPollContext> {
     }
 
     public User() { }
+
+    public static User GetById(int id) {
+        var user = Context.Users
+                    .Where(u => u.Id == id)
+                    .FirstOrDefault();
+        return user;
+    }
 }

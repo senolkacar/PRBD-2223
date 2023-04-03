@@ -28,7 +28,7 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Label Content="Poll Name:"/>
-            <TextBox TextWrapping="Wrap" Text="{Binding PollName,Mode=OneWay}" Height="20" Grid.Column="1"/>
+            <TextBox TextWrapping="Wrap" Text="{Binding Name,Mode=TwoWay}" Height="20" Grid.Column="1"/>
             <Label Grid.Row="1" Content="Type:"/>
             <ComboBox Grid.Row="1" Height="20" Margin="0,1,0,0" Grid.Column="1"
                       SelectedItem="selected">
@@ -54,17 +54,17 @@
             <Label Content="Participants" FontWeight="Bold" FontSize="14"/>
             <Label Content="Choices" Grid.Column="1" FontWeight="Bold" FontSize="14"/>
             <Label Content="No participants yet!" Grid.Row="1" Foreground="Red" FontWeight="Bold"/>
-            <ListBox Grid.Row="1" Margin="5" ItemsSource="{Binding Participants}" DisplayMemberPath="FullName">
+            <ListBox Grid.Row="1" Margin="5" ItemsSource="{Binding Participants,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding NoParticipant}"  DisplayMemberPath="FullName">
             </ListBox>
             <Label Content="No choices yet!" Grid.Row="1" Grid.Column="1" Foreground="Red" FontWeight="Bold"/>
-            <ListBox Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Choices}" DisplayMemberPath="Label" SelectedItem="Id">
+            <ListBox Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Choices}" DisplayMemberPath="Label" SelectedItem="Id" Visibility="{Binding NoChoice}">
             </ListBox>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <ComboBox HorizontalAlignment="Stretch" Margin="5,0,0,0" ItemsSource="{Binding Users}" DisplayMemberPath="FullName" SelectedItem="{Binding SelectedUser}">
+                <ComboBox HorizontalAlignment="Stretch" Margin="5,0,0,0" ItemsSource="{Binding Users,UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="FullName" SelectedItem="{Binding SelectedUser}">
                 </ComboBox>
                 <Button Grid.Column="1" Command="{Binding AddSelectedUser}" IsEnabled="{Binding UserRemainFromList}" Width="50" Margin="5,0,5,0" Content="Add"/>
             </Grid>
@@ -73,8 +73,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox HorizontalAlignment="Stretch" Margin="5,0,0,0"/>
-                <Button Grid.Column="1" Width="50" Margin="5,0,5,0" Content="Add"/>
+                <TextBox x:Name="choice" HorizontalAlignment="Stretch" Text="{Binding Choice}" Margin="5,0,0,0"/>
+                <Button Grid.Column="1" Width="50" Command="{Binding AddChoice}" IsEnabled="{Binding ElementName=choice, Path=Text.Length, Mode=OneWay}" Margin="5,0,5,0" Content="Add"/>
             </Grid>
             <DockPanel Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10">
                 <Button Content="Add Myself" Command="{Binding AddMyself}" IsEnabled="{Binding MyParticipation}" Width="100"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,0"/>
@@ -82,8 +82,8 @@
             </DockPanel>
         </Grid>
         <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
-            <Button Content="Save" Width="75" Margin="10"/>
-            <Button Content="Cancel" Width="75" Margin="10"/>
+            <Button Content="Save" Command="{Binding Save}" Width="75" Margin="10"/>
+            <Button Content="Cancel" Command="{Binding Cancel}" Width="75" Margin="10"/>
         </DockPanel>
     </StackPanel>
 </f:UserControlBase>
