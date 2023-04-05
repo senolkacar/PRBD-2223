@@ -29,6 +29,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
         NoChoice = IsNew ? "hidden" : Choices.Count > 0 ? "visible" : "hidden";
         NoParticipant = IsNew ? "hidden" : Participants.Count() > 0 ? "visible" : "hidden";
         MyParticipation = Context.Participations.Any(p => p.UserId == CurrentUser.Id && p.PollId == Poll.Id) ? false : true;
+        RemoveParticipant = new RelayCommand<User>(removeParticipant);
         Save = new RelayCommand(SaveAction, CanSaveAction);
         Cancel = new RelayCommand(CancelAction);
         Delete = new RelayCommand(DeleteAction, () => !IsNew);
@@ -99,6 +100,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public ICommand Save { get; set; }
     public ICommand Cancel { get; set; }
     public ICommand Delete { get; set; }
+    public ICommand RemoveParticipant { get; set; }
 
     public CreateEditPollViewModel() { }
 
@@ -145,8 +147,8 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public ICommand AddSelectedUser => new RelayCommand(() => AddUser());
 
     public void AddUser() {
-        if (SelectedUser != null && !isParticipant(SelectedUser.Id)) {
-            var p = new Participation { PollId = Poll.Id, UserId = SelectedUser.Id };
+        if (SelectedUser != null) {
+            var p = new Participation { Poll = Poll, UserId = SelectedUser.Id };
             Context.Participations.Add(p);
 
             if (SelectedUser.Id == CurrentUser.Id) {
@@ -170,10 +172,29 @@ public class CreateEditPollViewModel : ViewModelCommon {
         return Context.Participations.Any(p => p.UserId == userId && p.PollId == Poll.Id);
     }
 
+ 
     public ICommand AddMyself => new RelayCommand(() => addMyself());
+    public void removeParticipant(User participant) {
+        Participants.Remove(participant);
+        var participation = Context.Participations.SingleOrDefault(p => p.UserId == participant.Id && p.PollId == Poll.Id);
+        if (participation != null) {
+            Context.Participations.Remove(participation);
+        }
+        Users.Add(participant);
+        UserRemainFromList = true;
+        if(participant == CurrentUser) {
+            MyParticipation = true;
+        }
+        if(Participants.Count == 0) {
+            NoParticipant = "hidden";
+        }
+        RaisePropertyChanged(nameof(MyParticipation), nameof(NoParticipant), nameof(Participants), nameof(Users));
+        NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
+    }
     public void addMyself() {
         if (Context.Participations.Any(p => p.UserId == CurrentUser.Id)) {
-            var p = new Participation { PollId = Poll.Id, UserId = CurrentUser.Id };
+            //var p = new Participation { PollId = Poll.Id, UserId = CurrentUser.Id };
+            var p = new Participation { Poll = Poll, UserId = CurrentUser.Id };
             Context.Participations.Add(p);
             Participants.Add(CurrentUser);
             Users.Remove(CurrentUser);
@@ -199,7 +220,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public ICommand AddChoice => new RelayCommand(() => addChoice());
     public void addChoice() {
         if (!Choice.IsNullOrEmpty()) {
-            Choice choice = new Choice(Poll.Id, Choice);
+            Choice choice = new Choice { Poll = Poll, Label = Choice };
             Context.Choices.Add(choice);
             Choices.Add(choice);
             Choice = "";
@@ -213,7 +234,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
         var pollParticipants = Participants.ToList();
         foreach (User u in Users) {
             if (!pollParticipants.Any(p => p.Id == u.Id)) {
-                var p = new Participation { PollId = Poll.Id, UserId = u.Id };
+                var p = new Participation { Poll = Poll, UserId = u.Id };
                 Participants.Add(u);
                 Context.Participations.Add(p);
                 Users = new ObservableCollection<User>();
@@ -229,18 +250,18 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public override void SaveAction() {
         //throw pollid exception for new poll
         if (IsNew) {
-            Context.Add(new Poll(Name));
+            Context.Polls.Add(Poll);
             IsNew = false;
         }
+        Console.WriteLine(Context.ChangeTracker.DebugView.LongView);
         Context.SaveChanges();
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
     }
 
-    //cansaveaction is not tracking the poll's modification status correctly
     private bool CanSaveAction() {
         if (IsNew)
-            return !string.IsNullOrEmpty(Name);
-        return !Poll.IsModified;
+            return !string.IsNullOrEmpty(Name) && (NoChoice == "visible" && NoParticipant == "visible") ;
+        return Context.ChangeTracker.HasChanges();
     }
     public override void CancelAction() {
         Context.Entry(Poll).State = EntityState.Detached;

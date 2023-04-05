@@ -38,7 +38,16 @@ public partial class App : ApplicationBase<User,MyPollContext> {
         Context.Database.EnsureDeleted();
         Context.Database.EnsureCreated();
 
-       
+        //var user = User.GetById(1);
+        //var poll = new Poll { Name = "test", Creator = user };
+        //var p = new Participation { Poll = poll, UserId = user.Id };
+        //Context.Participations.Add(p);
+        //Context.Polls.Add(poll);
+        //Console.WriteLine(Context.ChangeTracker.DebugView.ShortView);
+        //Context.SaveChanges();
+
+
+
 
         // Cold start
         Console.Write("Cold starting database... ");
