@@ -6,10 +6,14 @@
         xmlns:vw="clr-namespace:MyPoll.View"
         xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
         xmlns:fap="http://schemas.fontawesome.com/icons/fonts/properties"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         xmlns:vm="clr-namespace:MyPoll.ViewModel"
         mc:Ignorable="d" 
         d:DataContext="{d:DesignInstance Type=vm:CreateEditPollViewModel, IsDesignTimeCreatable=False}"
         Height="800" Width="950">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+    </UserControl.Resources>
     <StackPanel>
         <TextBlock Margin="10">
                 <Run FontWeight="Bold" FontSize="18" Text="{Binding PollName,Mode=OneWay}"/>
@@ -71,7 +75,42 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             <Label Content="No choices yet!" Grid.Row="1" Grid.Column="1" Foreground="Red" FontWeight="Bold"/>
-            <ListBox Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Choices,UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Label" SelectedItem="Id" Visibility="{Binding NoChoice}">
+            <ListBox x:Name="choicelist" HorizontalContentAlignment="Stretch" Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Choices,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding NoChoice}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Width="auto" HorizontalAlignment="Stretch" Text="{Binding Label,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DataContext.Editable, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}" />
+                            <TextBox Width="auto" HorizontalAlignment="Stretch" Text="{Binding Label,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DataContext.EditMode, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}" Margin="5"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" Margin="0">
+                                <Button fap:FontAwesome.Icon="Solid_Pencil" Foreground="Black" Width="20"
+                        FontSize="15" Margin="0"
+                        Padding="2" Background="Transparent" BorderBrush="Transparent"
+                          Visibility="{Binding DataContext.Editable, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
+                        Command="{Binding ElementName=choicelist,Path=DataContext.EditChoiceCMD}" CommandParameter="{Binding}" />
+                                <Button fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red" Width="20"
+                        FontSize="15" Margin="0"
+                        Padding="2" Background="Transparent" BorderBrush="Transparent"
+                          Visibility="{Binding DataContext.Editable, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
+                        Command="{Binding ElementName=choicelist,Path=DataContext.RemoveChoiceCMD}" CommandParameter="{Binding}"  />
+                                <Button fap:FontAwesome.Icon="Solid_FloppyDisk" Foreground="Green" Width="20"
+                        FontSize="15" Margin="0"
+                        Padding="2" Background="Transparent" BorderBrush="Transparent"
+                         Visibility="{Binding DataContext.EditMode, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
+                        Command="{Binding ElementName=choicelist,Path=DataContext.SaveChoiceCMD}" CommandParameter="{Binding}"  />
+                                <Button fap:FontAwesome.Icon="Solid_X" Foreground="red" Width="20" FontSize="15"
+                        Margin="0"
+                        Padding="2" Background="Transparent" BorderBrush="Transparent"
+                        Visibility="{Binding DataContext.EditMode, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
+                        Command="{Binding ElementName=choicelist,Path=DataContext.CancelChoiceCMD}" CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>

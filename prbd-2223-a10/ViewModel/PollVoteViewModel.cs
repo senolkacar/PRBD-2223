@@ -13,7 +13,11 @@ using PRBD_Framework;
 
 namespace MyPoll.ViewModel;
     public class PollVoteViewModel : ViewModelCommon {
+    private readonly User participant;
+    private readonly Choice choice;
     public PollVoteViewModel(User participant,Choice choice) {
+        this.participant = participant;
+        this.choice = choice;
         HasVoted = participant.Votes.Any(v => v.ChoiceId == choice.Id);
         SelectedVoteType = (from v in Context.Votes
                             where v.ChoiceId == choice.Id && v.UserId == participant.Id
@@ -25,6 +29,9 @@ namespace MyPoll.ViewModel;
         VoteMaybe = new RelayCommand(() => SetMaybe());
         VoteNo = new RelayCommand(() => SetNo());
     }
+
+    public User Participant => participant;
+    public Choice Choice => choice;
     public Vote Votes { get; private set; }
         public PollVoteViewModel() { }
         private bool _editMode;
@@ -84,6 +91,9 @@ namespace MyPoll.ViewModel;
                 RaisePropertyChanged(nameof(YesVoteToolTip));
                 RaisePropertyChanged(nameof(MaybeVoteToolTip));
                 RaisePropertyChanged(nameof(NoVoteToolTip));
+                 if (!value && participant.Votes.Any(v => v.ChoiceId == Choice.Id)) {
+                participant.Votes.Remove(Votes);
+            }
             }
         }
 
