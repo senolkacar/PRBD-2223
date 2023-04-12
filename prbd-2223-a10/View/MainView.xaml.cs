@@ -62,7 +62,7 @@ public partial class MainView : WindowBase {
     private void DoCloseTab(Poll poll) {
        var tab = tabControl.FindByTag(poll.Name);
         if (tab == null) {
-            tabControl.CloseByTag(string.IsNullOrEmpty(poll.Name) ? "<New Poll>" : poll.Name);
+            tabControl.CloseByTag("<New Poll>");
         } else {
             var pollChoicesView = new PollChoicesView(poll);
             tab.Content = pollChoicesView;

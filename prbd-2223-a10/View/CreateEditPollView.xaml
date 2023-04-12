@@ -8,12 +8,14 @@
         xmlns:fap="http://schemas.fontawesome.com/icons/fonts/properties"
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         xmlns:vm="clr-namespace:MyPoll.ViewModel"
-        mc:Ignorable="d" 
-        d:DataContext="{d:DesignInstance Type=vm:CreateEditPollViewModel, IsDesignTimeCreatable=False}"
+        mc:Ignorable="d"
         Height="800" Width="950">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
     </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:CreateEditPollViewModel/>
+    </UserControl.DataContext>
     <StackPanel>
         <TextBlock Margin="10">
                 <Run FontWeight="Bold" FontSize="18" Text="{Binding PollName,Mode=OneWay}"/>
@@ -59,21 +61,18 @@
             <Label Content="Participants" FontWeight="Bold" FontSize="14"/>
             <Label Content="Choices" Grid.Column="1" FontWeight="Bold" FontSize="14"/>
             <Label Content="No participants yet!" Grid.Row="1" Foreground="Red" FontWeight="Bold"/>
-            <ListBox x:Name="participantlist" HorizontalContentAlignment="Stretch" Grid.Row="1" Margin="5" ItemsSource="{Binding Participants, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding NoParticipant}">
-                <ListBox.ItemTemplate>
+            <ListView x:Name="participant_list" HorizontalAlignment="Stretch" ItemsSource="{Binding Participants}" Grid.Row="1" BorderBrush="Transparent" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                   <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Width="auto" HorizontalAlignment="Stretch" Text="{Binding FullName}" />
-                            <Button Grid.Column="1" VerticalAlignment="Top" fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red" Width="20" FontSize="15" Margin="5"
-                        Padding="2" Background="Transparent" BorderBrush="Transparent" Command="{Binding ElementName=participantlist,Path=DataContext.RemoveParticipant}" CommandParameter="{Binding}"/>
-                        </Grid>
+                        <vw:PollParticipantListView/>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
             <Label Content="No choices yet!" Grid.Row="1" Grid.Column="1" Foreground="Red" FontWeight="Bold"/>
             <ListBox x:Name="choicelist" HorizontalContentAlignment="Stretch" Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Choices,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding NoChoice}">
                 <ListBox.ItemTemplate>

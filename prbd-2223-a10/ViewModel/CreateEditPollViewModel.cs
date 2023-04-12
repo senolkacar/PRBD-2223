@@ -25,13 +25,13 @@ public class CreateEditPollViewModel : ViewModelCommon {
         Poll = poll;
         IsNew = isNew;
         Users = new ObservableCollection<User>(AllUsers);
-        Participants = new ObservableCollection<User>(GetParticipants());
+        ParticipantList = new ObservableCollection<User>(GetParticipants());
+        Participants = new ObservableCollection<PollParticipantListViewModel>(ParticipantList.Select(p => new PollParticipantListViewModel(p, poll)));
         Choices = new ObservableCollection<Choice>(GetChoices());
         UserRemainFromList = Users.Count() > 0 ? true : false;
         NoChoice = IsNew ? "hidden" : Choices.Count > 0 ? "visible" : "hidden";
         NoParticipant = IsNew ? "hidden" : Participants.Count() > 0 ? "visible" : "hidden";
         MyParticipation = Context.Participations.Any(p => p.UserId == CurrentUser.Id && p.PollId == Poll.Id) ? false : true;
-        RemoveParticipant = new RelayCommand<User>(removeParticipant);
         EditChoiceCMD = new RelayCommand<Choice>(EditChoice);
         RemoveChoiceCMD = new RelayCommand<Choice>(RemoveChoice);
         CancelChoiceCMD = new RelayCommand<Choice>(CancelChoice);
@@ -77,8 +77,14 @@ public class CreateEditPollViewModel : ViewModelCommon {
         set => SetProperty(ref _myParticipation, value);
     }
 
-    private ObservableCollection<User> _participants;
-    public ObservableCollection<User> Participants {
+    private ObservableCollection<User> _participantList;
+    public ObservableCollection<User> ParticipantList {
+        get => _participantList;
+        set => SetProperty(ref _participantList, value);
+    }
+
+    private ObservableCollection<PollParticipantListViewModel> _participants;
+    public ObservableCollection<PollParticipantListViewModel> Participants {
         get => _participants;
         set => SetProperty(ref _participants, value);
     }
@@ -125,7 +131,6 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public ICommand Save { get; set; }
     public ICommand Cancel { get; set; }
     public ICommand Delete { get; set; }
-    public ICommand RemoveParticipant { get; set; }
 
     public ICommand SaveChoiceCMD { get; set; }
     public ICommand EditChoiceCMD { get; set; }
@@ -154,6 +159,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
         get => _newLabelVal;
         set => SetProperty(ref _newLabelVal, value);
     }
+
 
     public List<User> GetParticipants() {
         var list = (from u in Context.Users
@@ -191,7 +197,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
     }
 
 
-    public void AddUser() {
+   public void AddUser() {
         if (SelectedUser != null) {
             var p = new Participation { Poll = Poll, UserId = SelectedUser.Id };
             Context.Participations.Add(p);
@@ -199,60 +205,42 @@ public class CreateEditPollViewModel : ViewModelCommon {
             if (SelectedUser.Id == CurrentUser.Id) {
                 MyParticipation = false;
             }
-            Participants.Add(SelectedUser);
+            ParticipantList.Add(SelectedUser);
             Users.Remove(SelectedUser);
             if (Users.Count == 0) {
                 UserRemainFromList = false;
             }
             NoParticipant = "visible";
 
-            RaisePropertyChanged(nameof(Participants), nameof(NoParticipant), nameof(Users), nameof(MyParticipation), nameof(UserRemainFromList));
+            RaisePropertyChanged(nameof(ParticipantList), nameof(NoParticipant), nameof(Users), nameof(MyParticipation), nameof(UserRemainFromList));
         }
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
-
-
+        OnRefreshData();
     }
 
- 
-    public void removeParticipant(User participant) {
-        Participants.Remove(participant);
-        var participation = Context.Participations.SingleOrDefault(p => p.UserId == participant.Id && p.PollId == Poll.Id);
-        if (participation != null) {
-            Context.Participations.Remove(participation);
-        }
-        Users.Add(participant);
-        UserRemainFromList = true;
-        if(participant == CurrentUser) {
-            MyParticipation = true;
-        }
-        if(Participants.Count == 0) {
-            NoParticipant = "hidden";
-        }
-        RaisePropertyChanged(nameof(MyParticipation), nameof(NoParticipant), nameof(Participants), nameof(Users));
-        NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
-    }
     public void addMyself() {
         if (Context.Participations.Any(p => p.UserId == CurrentUser.Id)) {
             //var p = new Participation { PollId = Poll.Id, UserId = CurrentUser.Id };
             var p = new Participation { Poll = Poll, UserId = CurrentUser.Id };
             Context.Participations.Add(p);
-            Participants.Add(CurrentUser);
+            ParticipantList.Add(CurrentUser);
             Users.Remove(CurrentUser);
             MyParticipation = false;
             if (Users.Count == 0) {
                 UserRemainFromList = false;
             }
             NoParticipant = "visible";
-            RaisePropertyChanged(nameof(MyParticipation),nameof(NoParticipant), nameof(Participants), nameof(Users));
+            RaisePropertyChanged(nameof(MyParticipation),nameof(NoParticipant), nameof(ParticipantList), nameof(Users));
         }
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
+        OnRefreshData();
     }
     public void addEverybody() {
-        var pollParticipants = Participants.ToList();
+        var pollParticipants = ParticipantList.ToList();
         foreach (User u in Users) {
             if (!pollParticipants.Any(p => p.Id == u.Id)) {
                 var p = new Participation { Poll = Poll, UserId = u.Id };
-                Participants.Add(u);
+                ParticipantList.Add(u);
                 Context.Participations.Add(p);
                 Users = new ObservableCollection<User>();
 
@@ -262,7 +250,8 @@ public class CreateEditPollViewModel : ViewModelCommon {
         MyParticipation = false;
         NoParticipant = "visible";
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
-        RaisePropertyChanged(nameof(UserRemainFromList), nameof(Participants), nameof(NoParticipant), nameof(Users), nameof(MyParticipation));
+        RaisePropertyChanged(nameof(UserRemainFromList), nameof(ParticipantList), nameof(NoParticipant), nameof(Users), nameof(MyParticipation));
+        OnRefreshData();
     }
     public void addChoice() {
         if (!Choice.IsNullOrEmpty()) {
@@ -339,7 +328,12 @@ public class CreateEditPollViewModel : ViewModelCommon {
         NotifyColleagues(App.Polls.POLL_CLOSE_TAB, Poll);
     }
 
-   
+    protected override void OnRefreshData(){
+        Participants = new ObservableCollection<PollParticipantListViewModel>(ParticipantList.Select(p => new PollParticipantListViewModel(p, Poll)));
+    }
+
+
+
 }
 
    
