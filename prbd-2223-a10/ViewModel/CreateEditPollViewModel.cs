@@ -28,6 +28,8 @@ public class CreateEditPollViewModel : ViewModelCommon {
         ParticipantList = new ObservableCollection<User>(GetParticipants());
         Participants = new ObservableCollection<PollParticipantListViewModel>(ParticipantList.Select(p => new PollParticipantListViewModel(p, poll)));
         Choices = new ObservableCollection<Choice>(GetChoices());
+        IsClosed = IsNew ? false : Poll.Closed;
+        PollType = IsNew ? PollType.Multiple : Poll.Type;
         UserRemainFromList = Users.Count() > 0 ? true : false;
         NoChoice = IsNew ? "hidden" : Choices.Count > 0 ? "visible" : "hidden";
         NoParticipant = IsNew ? "hidden" : Participants.Count() > 0 ? "visible" : "hidden";
@@ -45,6 +47,18 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public Poll Poll {
         get => _poll;
         set => SetProperty(ref _poll, value);
+    }
+
+    private PollType _pollType;
+    public PollType PollType {
+        get => _pollType;
+        set => SetProperty(ref _pollType, value);
+    }
+
+    private bool _isClosed;
+    public bool IsClosed {
+        get => _isClosed;
+        set => SetProperty(ref _isClosed, value);
     }
 
     private bool _isNew;

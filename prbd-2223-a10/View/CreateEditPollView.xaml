@@ -45,7 +45,7 @@
             <Label Grid.Row="2" Content="Creator:"/>
             <Label Grid.Row="2" HorizontalAlignment="Left" Grid.Column="1" Margin="0,1,0,0" Content="{Binding Creator}"/>
             <Label Grid.Row="3" Content="Is Closed:"/>
-            <CheckBox Grid.Row="3" VerticalAlignment="Center" Grid.Column="1"/>
+            <CheckBox Grid.Row="3" IsChecked="{Binding IsClosed,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Grid.Column="1"/>
         </Grid>
         <Grid Margin="10">
             <Grid.ColumnDefinitions>
@@ -61,7 +61,7 @@
             <Label Content="Participants" FontWeight="Bold" FontSize="14"/>
             <Label Content="Choices" Grid.Column="1" FontWeight="Bold" FontSize="14"/>
             <Label Content="No participants yet!" Grid.Row="1" Foreground="Red" FontWeight="Bold"/>
-            <ListView x:Name="participant_list" HorizontalAlignment="Stretch" ItemsSource="{Binding Participants}" Grid.Row="1" BorderBrush="Transparent" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListView x:Name="participant_list" HorizontalAlignment="Stretch" ItemsSource="{Binding Participants}" Grid.Row="1" BorderBrush="Transparent" SelectionMode="Single" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Visibility="{Binding NoParticipant}">
                    <ListView.ItemTemplate>
                     <DataTemplate>
                         <vw:PollParticipantListView/>

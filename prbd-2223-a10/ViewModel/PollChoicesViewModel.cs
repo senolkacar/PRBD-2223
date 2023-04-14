@@ -50,7 +50,7 @@ public class PollChoicesViewModel : ViewModelCommon {
     public ICommand EditPoll { get; set; }
 
 
-    public ICommand DeletePoll;
+    public ICommand DeletePoll => new RelayCommand(() => deletePoll());
    
     private string _commentTxt;
     public string CommentTxt {
@@ -60,6 +60,13 @@ public class PollChoicesViewModel : ViewModelCommon {
 
     public ICommand NewComment => new RelayCommand(AddNewComment, () => { return !String.IsNullOrEmpty(_commentTxt); });
 
+    private void deletePoll() {
+        Context.Polls.Remove(Poll);
+        Context.SaveChanges();
+    }
+
+
+    public string EditDeleteButtonVisibility => CurrentUser == Poll.Creator || IsAdmin ? "visible" : "hidden";
     public string PollName => Poll.Name;
 
     public string Creator => Poll.Creator.FullName;
