@@ -12,6 +12,7 @@ public partial class App : ApplicationBase<User,MyPollContext> {
         POLL_DISPLAY,
         POLL_ADD,
         POLL_EDIT,
+        POLL_SIGNUP,
         POLL_CHANGED,
         POLL_NAME_CHANGED,
         POLL_LOGOUT,
@@ -29,6 +30,10 @@ public partial class App : ApplicationBase<User,MyPollContext> {
         Register(this, Polls.POLL_LOGOUT, () => {
             Logout();
             NavigateTo<LoginViewModel, User, MyPollContext>();
+        });
+
+        Register(this, Polls.POLL_SIGNUP, () => {
+            NavigateTo<SignupViewModel, User, MyPollContext>();
         });
 
     }

@@ -45,7 +45,7 @@ public class PollViewModel: ViewModelCommon {
         IQueryable<Poll> polls = string.IsNullOrEmpty(Filter) ? Poll.GetAll() : Poll.GetFiltered(Filter);
         var filteredPolls = from p in polls
                             where p.Creator.FullName == CurrentUser.FullName ||
-                            p.Participations.Any(f => CurrentUser!=null && f.UserId == CurrentUser.Id)
+                            p.Participations.Any(f => CurrentUser != null && f.UserId == CurrentUser.Id) || IsAdmin
                             orderby p.Name
                              select p;
         Polls = new ObservableCollection<PollCardViewModel>(filteredPolls.Select(p => new PollCardViewModel(p)));

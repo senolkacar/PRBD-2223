@@ -22,6 +22,7 @@ public partial class MainView : WindowBase {
 
     }
 
+ 
     private void DisplayPoll(Poll poll) {
         if (poll != null) {
             OpenTab(poll.Name,poll.Name,()=>new PollChoicesView(poll));

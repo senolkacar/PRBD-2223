@@ -7,7 +7,7 @@
               xmlns:vm="clr-namespace:MyPoll.ViewModel"
               mc:Ignorable="d"
               WindowStartupLocation="CenterScreen"
-              Title="MyPoll - prbd-2223-a10"
+              Title="MyPoll - prbd-2223-a10 - Login"
               Height="350" Width="270">
     <Window.DataContext>
         <vm:LoginViewModel x:Name="vm"/>
@@ -44,7 +44,7 @@
         <DockPanel Grid.Row="3" Grid.ColumnSpan="2">
             <TextBlock Height="auto" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" Width="220" >
                 <Run Text="If you don't have a login and a password, click"/>
-                <Hyperlink><Run Text="here"/></Hyperlink>
+                <Hyperlink Command="{Binding SignupCommand}"><Run Text="here"/></Hyperlink>
                 <Run Text="to sign-up."/>
             </TextBlock>
         </DockPanel>

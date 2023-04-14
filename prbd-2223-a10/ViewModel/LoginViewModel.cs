@@ -18,6 +18,8 @@ public class LoginViewModel : ViewModelCommon {
     public ICommand LoginJohn { get; set; }
     public ICommand LoginAdmin { get; set; }
 
+    public ICommand SignupCommand { get; set; }
+
     private string _email;
 
     public string Email {
@@ -38,6 +40,7 @@ public class LoginViewModel : ViewModelCommon {
         LoginHarry = new RelayCommand(LoginHarryAction);
         LoginJohn = new RelayCommand(LoginJohnAction);
         LoginAdmin = new RelayCommand(LoginAdminAction);
+        SignupCommand = new RelayCommand(() => NotifyColleagues(App.Polls.POLL_SIGNUP));
 
     }
 
@@ -56,6 +59,7 @@ public class LoginViewModel : ViewModelCommon {
     private void LoginAdminAction() {
         Email = "admin@test.com";
         Password = "admin";
+        LoginAction();
     }
 
     private void LoginAction() {
