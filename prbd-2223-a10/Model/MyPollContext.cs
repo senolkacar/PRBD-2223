@@ -16,7 +16,7 @@ public class MyPollContext : DbContextBase {
         base.OnConfiguring(optionsBuilder);
         optionsBuilder
             .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=prbd-2223-a10")
-            .LogTo(Console.WriteLine, LogLevel.Information)
+            //.LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .UseLazyLoadingProxies(true);
     }

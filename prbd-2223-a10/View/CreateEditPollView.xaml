@@ -13,9 +13,9 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
     </UserControl.Resources>
-    <UserControl.DataContext>
+    <!--<UserControl.DataContext>
         <vm:CreateEditPollViewModel/>
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
     <StackPanel>
         <TextBlock Margin="10">
                 <Run FontWeight="Bold" FontSize="18" Text="{Binding PollName,Mode=OneWay}"/>

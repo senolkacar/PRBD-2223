@@ -36,11 +36,13 @@ namespace MyPoll.ViewModel
                                  select v).Count();
         public ICommand RemoveParticipant { get; set; }
         public void removeParticipant(User participant) {
-            var participationToRemove = Context.Participations.SingleOrDefault(p => p.UserId == participant.Id && p.PollId == Poll.Id);
-            Context.Participations.Remove(participationToRemove);
-            Console.WriteLine(participationToRemove);
-            NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
-            OnRefreshData();
+            var participationToRemove = Context.Participations.SingleOrDefault(p => p.PollId == Poll.Id && p.UserId == participant.Id);
+            if (participationToRemove != null) {
+                Context.Participations.Remove(participationToRemove);
+            } else {
+                Console.WriteLine("participation is null");
+            }
+            //NotifyColleagues(App.Polls.POLL_EDIT, Poll);
         }
     }
 }

@@ -66,10 +66,10 @@ public class PollChoicesViewModel : ViewModelCommon {
     }
 
 
-    public string EditDeleteButtonVisibility => CurrentUser == Poll.Creator || IsAdmin ? "visible" : "hidden";
-    public string PollName => Poll.Name;
+    public string EditDeleteButtonVisibility => CurrentUser == Poll?.Creator || IsAdmin ? "visible" : "hidden";
+    public string PollName => Poll?.Name;
 
-    public string Creator => Poll.Creator.FullName;
+    public string Creator => Poll?.Creator?.FullName;
 
     private List<Choice> _choices;
     public List<Choice> Choices => _choices;
@@ -109,6 +109,8 @@ public class PollChoicesViewModel : ViewModelCommon {
     public List<Comment> Comments => GetComments();
 
     public List<Comment> GetComments() {
+        if (Poll == null)
+            return new List<Comment>();
         var list = Context.Comments
             .Where(c=>c.PollId == Poll.Id)
             .OrderByDescending(c=>c.Timestamp)

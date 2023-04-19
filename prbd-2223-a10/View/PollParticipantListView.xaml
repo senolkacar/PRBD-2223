@@ -19,7 +19,9 @@
         <TextBlock VerticalAlignment="Center" Text="{Binding FullName}">
         </TextBlock>
         <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding VoteCount,StringFormat=' ({0})'}"></TextBlock>
+        <!--<Button Grid.Column="2" VerticalAlignment="Center" fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red" Width="20" FontSize="15" Margin="5"
+                        Command="{Binding RemoveParticipant}" CommandParameter="{Binding Participant}" Padding="2" Background="Transparent" BorderBrush="Transparent"/>-->
         <Button Grid.Column="2" VerticalAlignment="Center" fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red" Width="20" FontSize="15" Margin="5"
-                        Command="{Binding RemoveParticipant}" CommandParameter="{Binding Participant}" Padding="2" Background="Transparent" BorderBrush="Transparent"/>
+                        Command="{Binding DataContext.RemoveParticipant, RelativeSource={RelativeSource AncestorType=vw:CreateEditPollView}}" CommandParameter="{Binding Participant}" Padding="2" Background="Transparent" BorderBrush="Transparent"/>
     </Grid>
 </f:UserControlBase>

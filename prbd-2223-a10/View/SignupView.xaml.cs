@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 using PRBD_Framework;
 
 namespace MyPoll.View {
-    /// <summary>
-    /// Logique d'interaction pour SignupView.xaml
-    /// </summary>
     public partial class SignupView : WindowBase {
         public SignupView() {
             InitializeComponent();

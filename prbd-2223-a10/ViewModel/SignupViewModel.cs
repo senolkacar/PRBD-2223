@@ -51,6 +51,7 @@ namespace MyPoll.ViewModel {
             if (Validate()) {
                 var user = new User { Email = Email, Password = SecretHasher.Hash(Password), FullName = FullName };
                 Context.Users.Add(user);
+                Context.SaveChanges();
                 NotifyColleagues(App.Polls.POLL_LOGIN, user);
             }
         }

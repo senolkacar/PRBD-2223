@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Converters;
 using Castle.Components.DictionaryAdapter.Xml;
@@ -14,6 +15,7 @@ using Microsoft.Data.SqlClient.DataClassification;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using MyPoll.Model;
 using PRBD_Framework;
 using static MyPoll.App;
@@ -41,6 +43,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
         Save = new RelayCommand(SaveAction, CanSaveAction);
         Cancel = new RelayCommand(CancelAction);
         Delete = new RelayCommand(DeleteAction, () => !IsNew);
+        RemoveParticipant = new RelayCommand<User>(DeleteParticipant);
         RaisePropertyChanged();
     }
     private Poll _poll;
@@ -146,6 +149,8 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public ICommand Cancel { get; set; }
     public ICommand Delete { get; set; }
 
+    public ICommand RemoveParticipant { get; set; }
+
     public ICommand SaveChoiceCMD { get; set; }
     public ICommand EditChoiceCMD { get; set; }
     public ICommand RemoveChoiceCMD { get; set; }
@@ -161,9 +166,9 @@ public class CreateEditPollViewModel : ViewModelCommon {
 
     public CreateEditPollViewModel() { }
 
-    public string Creator => IsNew ? CurrentUser.FullName : Poll.Creator.FullName;
+    public string Creator => IsNew ? CurrentUser?.FullName : Poll?.Creator?.FullName;
 
-    public string PollName => IsNew ? "<New Poll>" : Poll.Name;
+    public string PollName => IsNew ? "<New Poll>" : Poll?.Name;
 
     public bool Editable => !EditMode;
 
@@ -214,7 +219,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
    public void AddUser() {
         if (SelectedUser != null) {
             var p = new Participation { Poll = Poll, UserId = SelectedUser.Id };
-            Context.Participations.Add(p);
+            //Context.Participations.Add(p);
 
             if (SelectedUser.Id == CurrentUser.Id) {
                 MyParticipation = false;
@@ -235,8 +240,8 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public void addMyself() {
         if (Context.Participations.Any(p => p.UserId == CurrentUser.Id)) {
             //var p = new Participation { PollId = Poll.Id, UserId = CurrentUser.Id };
-            var p = new Participation { Poll = Poll, UserId = CurrentUser.Id };
-            Context.Participations.Add(p);
+            var p = new Participation { Poll = Poll, User = CurrentUser };
+            //Context.Participations.Add(p);
             ParticipantList.Add(CurrentUser);
             Users.Remove(CurrentUser);
             MyParticipation = false;
@@ -342,9 +347,45 @@ public class CreateEditPollViewModel : ViewModelCommon {
         NotifyColleagues(App.Polls.POLL_CLOSE_TAB, Poll);
     }
 
+    private void DeleteParticipant(User user) {
+   
+        MessageBoxResult msgRes;
+        int VoteCount = (from v in Context.Votes
+                      join r in Context.Choices on v.ChoiceId equals r.Id
+                      where r.PollId == Poll.Id && v.UserId == user.Id
+                      select v).Count();
+        if (VoteCount>0) {
+            string msg = $"This participant has already {VoteCount} for this poll.\nIf you proceed and save the poll, his vote(s) will be deleted.\nDo you confirm";
+            msgRes = MessageBox.Show(msg,"Confirmation",MessageBoxButton.YesNo, MessageBoxImage.Information);
+            if (msgRes == MessageBoxResult.No) {
+                return;
+            } else {
+                var votesToRemove = Context.Votes.Where(v => v.UserId == user.Id && v.Choice.PollId == Poll.Id);
+                Context.Votes.RemoveRange(votesToRemove);
+            }
+        }
+     
+     Participants.Remove(Participants.Single(p => p.Participant.Id == user.Id));
+     var participation = Context.Participations.SingleOrDefault(p => p.UserId == user.Id && p.PollId == Poll.Id);
+     if( participation != null ) {
+        Context.Participations.Remove(participation);
+     }
+     ParticipantList.Remove(user);
+     Users.Add(user);
+    if (user == CurrentUser) {
+        MyParticipation = true;
+    }
+    if(ParticipantList.Count == 0) {
+        NoParticipant = "hidden";
+    }
+    }
+
     protected override void OnRefreshData(){
+        Console.WriteLine(this.GetHashCode());
         Participants = new ObservableCollection<PollParticipantListViewModel>(ParticipantList.Select(p => new PollParticipantListViewModel(p, Poll)));
     }
+
+
 
 
 
