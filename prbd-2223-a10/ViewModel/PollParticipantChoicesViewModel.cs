@@ -11,7 +11,7 @@ using PRBD_Framework;
 
 namespace MyPoll.ViewModel;
     public class PollParticipantChoicesViewModel : ViewModelCommon {
-
+        private List<Vote> _originalVotes;
         public PollParticipantChoicesViewModel(PollChoicesGridViewModel pollChoicesViewModel,User participant,Poll poll) {
             _pollChoicesViewModel = pollChoicesViewModel;
             _poll = poll;
@@ -49,7 +49,10 @@ namespace MyPoll.ViewModel;
         }
 
         private void EditModeChanged() {
-            foreach(PollVoteViewModel voteVM in _pollVoteVM) {
+        if (EditMode) {
+            _originalVotes = Participant.Votes.ToList();
+        }
+        foreach (PollVoteViewModel voteVM in _pollVoteVM) {
                 voteVM.EditMode = EditMode;
             }
         _pollChoicesViewModel.AskEditMode(EditMode);
@@ -89,6 +92,10 @@ namespace MyPoll.ViewModel;
 
     private void Cancel() {
         EditMode = false;
+        if (_originalVotes != null) {
+            Participant.Votes = _originalVotes;
+            _originalVotes = null;
+        }
         RefreshVotes(Poll);
     }
 

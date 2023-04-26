@@ -23,7 +23,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
                             select u).ToList();
 
         _participantVM = participants.Select(p => new PollParticipantChoicesViewModel(this, p, poll)).ToList();
-
+        PollClosed = Poll.Closed;
         EditPoll = new RelayCommand(() => NotifyColleagues(App.Polls.POLL_EDIT, _poll));
     }
 
@@ -41,9 +41,23 @@ public class PollChoicesGridViewModel : ViewModelCommon {
 
     }
 
+    private bool _pollClosed;
+    public bool PollClosed {
+        get => _pollClosed;
+        set {
+            if (SetProperty(ref _pollClosed, value)) {
+                Poll.Closed = value;
+            }
+        }
+    }
+
+    public bool IsClosed => PollClosed;
+
     private void AddCommentVisChanged() {
         RaisePropertyChanged(nameof(AddCommentVisibility));
     }
+
+    public ICommand ReOpen => new RelayCommand(() => PollClosed = false);
 
     public ICommand AddComment => new RelayCommand(() => AddCommentVisibility = true);
 
