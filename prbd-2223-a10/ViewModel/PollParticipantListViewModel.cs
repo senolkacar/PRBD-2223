@@ -14,7 +14,6 @@ namespace MyPoll.ViewModel
         public PollParticipantListViewModel(User participant, Poll poll) {
             Poll = poll;
             Participant = participant;
-            RemoveParticipant = new RelayCommand<User>(removeParticipant);
         }
 
         private Poll _poll;
@@ -34,15 +33,6 @@ namespace MyPoll.ViewModel
                                  join r in Context.Choices on v.ChoiceId equals r.Id
                                  where r.PollId == Poll.Id && v.UserId == Participant.Id
                                  select v).Count();
-        public ICommand RemoveParticipant { get; set; }
-        public void removeParticipant(User participant) {
-            var participationToRemove = Context.Participations.SingleOrDefault(p => p.PollId == Poll.Id && p.UserId == participant.Id);
-            if (participationToRemove != null) {
-                Context.Participations.Remove(participationToRemove);
-            } else {
-                Console.WriteLine("participation is null");
-            }
-            //NotifyColleagues(App.Polls.POLL_EDIT, Poll);
-        }
+ 
     }
 }

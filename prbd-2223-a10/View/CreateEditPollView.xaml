@@ -74,43 +74,13 @@
                 </ListView.ItemContainerStyle>
             </ListView>
             <Label Content="No choices yet!" Grid.Row="1" Grid.Column="1" Foreground="Red" FontWeight="Bold"/>
-            <ListBox x:Name="choicelist" HorizontalContentAlignment="Stretch" Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Choices,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding NoChoice}">
-                <ListBox.ItemTemplate>
+            <ListView x:Name="choicelist" HorizontalContentAlignment="Stretch" Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Choices}" SelectedItem="{Binding SelectedChoice}">
+                <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Width="auto" HorizontalAlignment="Stretch" Text="{Binding Label,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DataContext.Editable, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}" />
-                            <TextBox Width="auto" HorizontalAlignment="Stretch" Text="{Binding Label,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DataContext.EditMode, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}" Margin="5"/>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" Margin="0">
-                                <Button fap:FontAwesome.Icon="Solid_Pencil" Foreground="Black" Width="20"
-                        FontSize="15" Margin="0"
-                        Padding="2" Background="Transparent" BorderBrush="Transparent"
-                          Visibility="{Binding DataContext.Editable, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
-                        Command="{Binding ElementName=choicelist,Path=DataContext.EditChoiceCMD}" CommandParameter="{Binding}" />
-                                <Button fap:FontAwesome.Icon="Regular_TrashCan" Foreground="red" Width="20"
-                        FontSize="15" Margin="0"
-                        Padding="2" Background="Transparent" BorderBrush="Transparent"
-                          Visibility="{Binding DataContext.Editable, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
-                        Command="{Binding ElementName=choicelist,Path=DataContext.RemoveChoiceCMD}" CommandParameter="{Binding}"  />
-                                <Button fap:FontAwesome.Icon="Solid_FloppyDisk" Foreground="Green" Width="20"
-                        FontSize="15" Margin="0"
-                        Padding="2" Background="Transparent" BorderBrush="Transparent"
-                         Visibility="{Binding DataContext.EditMode, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
-                        Command="{Binding ElementName=choicelist,Path=DataContext.SaveChoiceCMD}" CommandParameter="{Binding}"  />
-                                <Button fap:FontAwesome.Icon="Solid_X" Foreground="red" Width="20" FontSize="15"
-                        Margin="0"
-                        Padding="2" Background="Transparent" BorderBrush="Transparent"
-                        Visibility="{Binding DataContext.EditMode, ElementName=choicelist, Converter={StaticResource BoolToVisConverter}}"
-                        Command="{Binding ElementName=choicelist,Path=DataContext.CancelChoiceCMD}" CommandParameter="{Binding}" />
-                            </StackPanel>
-                        </Grid>
+                        <vw:PollChoiceListView/>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                </ListView.ItemTemplate>
+            </ListView>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -125,7 +95,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="choice" HorizontalAlignment="Stretch" Text="{Binding Choice}" Margin="5,0,0,0"/>
+                <TextBox x:Name="choice" HorizontalAlignment="Stretch" Text="{Binding NewChoice}" Margin="5,0,0,0"/>
                 <Button Grid.Column="1" Width="50" Command="{Binding AddChoice}" IsEnabled="{Binding ElementName=choice, Path=Text.Length, Mode=OneWay}" Margin="5,0,5,0" Content="Add"/>
             </Grid>
             <DockPanel Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10">

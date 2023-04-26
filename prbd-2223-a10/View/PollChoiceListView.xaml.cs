@@ -12,16 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PRBD_Framework;
-using MyPoll.Model;
-using Microsoft.EntityFrameworkCore.Metadata;
-using MyPoll.ViewModel;
 
 namespace MyPoll.View {
-    public partial class PollChoicesView : UserControlBase {
-        public PollChoicesView(Poll poll) {
+    public partial class PollChoiceListView : UserControlBase {
+        public PollChoiceListView() {
             InitializeComponent();
-            DataContext = new PollChoicesViewModel(poll);
         }
-
     }
 }

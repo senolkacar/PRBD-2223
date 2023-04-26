@@ -25,7 +25,7 @@ public partial class MainView : WindowBase {
     
     private void DisplayPoll(Poll poll) {
         if (poll != null) {
-            OpenTab(poll.Name,poll.Name,()=>new PollChoicesView(poll));
+            OpenTab(poll.Name,poll.Name,()=>new PollChoicesGridView(poll));
         }
     }
     private void DoRenameTab(string header) {
@@ -65,7 +65,7 @@ public partial class MainView : WindowBase {
         if (tab == null) {
             tabControl.CloseByTag("<New Poll>");
         } else {
-            var pollChoicesView = new PollChoicesView(poll);
+            var pollChoicesView = new PollChoicesGridView(poll);
             tab.Content = pollChoicesView;
             tabControl.SetFocus(tab);
         }

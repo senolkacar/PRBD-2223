@@ -31,7 +31,7 @@
             </TextBlock>
             <TextBlock Grid.Row="3" TextAlignment="Center" FontSize="10" Margin="0,0,0,10">
                     <Run Text="{Binding VoteCount,Mode=OneWay}"/><Run Text=" votes"/>
-                    <TextBlock Text="{Binding Score}"></TextBlock>
+                    <TextBlock Text="{Binding Choice.Score}"></TextBlock>
             </TextBlock>
             <TextBlock Grid.Row="4" TextAlignment="Center" Text="{Binding ChoiceTitle}" FontWeight="Bold">
             </TextBlock>

@@ -12,7 +12,7 @@ using PRBD_Framework;
 namespace MyPoll.ViewModel;
     public class PollParticipantChoicesViewModel : ViewModelCommon {
 
-        public PollParticipantChoicesViewModel(PollChoicesViewModel pollChoicesViewModel,User participant,Poll poll) {
+        public PollParticipantChoicesViewModel(PollChoicesGridViewModel pollChoicesViewModel,User participant,Poll poll) {
             _pollChoicesViewModel = pollChoicesViewModel;
             _poll = poll;
             Participant = participant;
@@ -24,7 +24,7 @@ namespace MyPoll.ViewModel;
             DeleteCommand = new RelayCommand(Delete);
         }
 
-        private PollChoicesViewModel _pollChoicesViewModel;
+        private PollChoicesGridViewModel _pollChoicesViewModel;
 
         public ICommand EditCommand { get; }
         public ICommand SaveCommand { get; }

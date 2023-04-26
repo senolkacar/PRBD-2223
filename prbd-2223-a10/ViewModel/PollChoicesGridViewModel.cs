@@ -9,8 +9,8 @@ using MyPoll.Model;
 using PRBD_Framework;
 
 namespace MyPoll.ViewModel;
-public class PollChoicesViewModel : ViewModelCommon {
-    public PollChoicesViewModel(Poll poll) {
+public class PollChoicesGridViewModel : ViewModelCommon {
+    public PollChoicesGridViewModel(Poll poll) {
         _poll = poll;
         _choices = (from c in Context.Choices
                     where c.PollId == poll.Id
@@ -122,7 +122,7 @@ public class PollChoicesViewModel : ViewModelCommon {
 
     }
 
-    public PollChoicesViewModel() {
+    public PollChoicesGridViewModel() {
         
     }
 }
