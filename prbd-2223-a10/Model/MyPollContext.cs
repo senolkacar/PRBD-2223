@@ -83,12 +83,12 @@ public class MyPollContext : DbContextBase {
 
         modelBuilder.Entity<Poll>()
             .HasData(
-                new Poll { Id = 1, Name = "Meilleure citation ?", CreatorId = 1 },
-                new Poll { Id = 2, Name = "Meilleur film de série B ?", CreatorId = 3 },
+                new Poll { Id = 1, Name = "Meilleure citation ?", CreatorId = 1, Type = PollType.Multi},
+                new Poll { Id = 2, Name = "Meilleur film de série B ?", CreatorId = 3, Type = PollType.Multi },
                 new Poll { Id = 3, Name = "Plus belle ville du monde ?", CreatorId = 1, Type = PollType.Single },
-                new Poll { Id = 4, Name = "Meilleur animé japonais ?", CreatorId = 5 },
-                new Poll { Id = 5, Name = "Sport pratiqué", CreatorId = 3, Closed = true },
-                new Poll { Id = 6, Name = "Langage informatique préféré", CreatorId = 7 }
+                new Poll { Id = 4, Name = "Meilleur animé japonais ?", CreatorId = 5, Type = PollType.Multi },
+                new Poll { Id = 5, Name = "Sport pratiqué", CreatorId = 3, Closed = true, Type = PollType.Multi },
+                new Poll { Id = 6, Name = "Langage informatique préféré", CreatorId = 7, Type = PollType.Multi }
             );
 
         modelBuilder.Entity<Comment>()

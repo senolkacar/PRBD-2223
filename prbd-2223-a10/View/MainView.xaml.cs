@@ -65,9 +65,7 @@ public partial class MainView : WindowBase {
         if (tab == null) {
             tabControl.CloseByTag("<New Poll>");
         } else {
-            var pollChoicesView = new PollChoicesGridView(poll);
-            tab.Content = pollChoicesView;
-            tabControl.SetFocus(tab);
+            tabControl.CloseByTag(poll.Name);
         }
 
     }

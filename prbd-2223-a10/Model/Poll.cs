@@ -9,7 +9,7 @@ namespace MyPoll.Model;
 
 
     public enum PollType {
-        Single, Multiple
+        Single, Multi
     }
 
     public class Poll : EntityBase<MyPollContext> {
@@ -67,5 +67,12 @@ namespace MyPoll.Model;
                         select p).Distinct();
         return filtered;
         }
+
+        public void Delete() {
+            Participations.Clear();
+            Context.Polls.Remove(this);
+            Context.SaveChanges();
+        }
+
     }
 

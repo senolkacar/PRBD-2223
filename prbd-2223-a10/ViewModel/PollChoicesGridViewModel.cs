@@ -57,7 +57,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
         RaisePropertyChanged(nameof(AddCommentVisibility));
     }
 
-    public ICommand ReOpen => new RelayCommand(() => PollClosed = false);
+    public ICommand ReOpen => new RelayCommand(() => ReOpenPoll());
 
     public ICommand AddComment => new RelayCommand(() => AddCommentVisibility = true);
 
@@ -74,15 +74,24 @@ public class PollChoicesGridViewModel : ViewModelCommon {
 
     public ICommand NewComment => new RelayCommand(AddNewComment, () => { return !String.IsNullOrEmpty(_commentTxt); });
 
-    private void deletePoll() {
-        Context.Polls.Remove(Poll);
+
+    private void ReOpenPoll() {
+        PollClosed = false;
         Context.SaveChanges();
     }
 
 
-    public string EditDeleteButtonVisibility => CurrentUser == Poll?.Creator || IsAdmin ? "visible" : "hidden";
-    public string PollName => Poll?.Name;
+    private void deletePoll() {
+        Poll.Delete();
+        NotifyColleagues(App.Polls.POLL_CHANGED,Poll);
+        NotifyColleagues(App.Polls.POLL_CLOSE_TAB, Poll);
+    }
 
+
+    public string EditDeleteButtonVisibility => CurrentUser == Poll?.Creator || IsAdmin ? "visible" : "hidden";
+
+    public bool ReOpenButtonVisibility => (CurrentUser == Poll?.Creator || IsAdmin) && PollClosed;
+    public string PollName => Poll?.Name;
     public string Creator => Poll?.Creator?.FullName;
 
     private List<Choice> _choices;
@@ -90,8 +99,8 @@ public class PollChoicesGridViewModel : ViewModelCommon {
     private Poll _poll;
     public Poll Poll => _poll;
 
-    public void AddNewComment() {
-        if(!String.IsNullOrEmpty(CommentTxt)) { 
+    private void AddNewComment() {
+        if(!string.IsNullOrEmpty(CommentTxt)) { 
         Comment comment = new Comment {
             UserId = CurrentUser.Id,
             PollId = Poll.Id,
@@ -106,7 +115,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
         }
     }
 
-    public void UpdateComments() {
+    private void UpdateComments() {
         RaisePropertyChanged(nameof(Comments));
     }
 

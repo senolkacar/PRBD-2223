@@ -58,7 +58,7 @@ namespace MyPoll.ViewModel {
 
         }
 
-        
+        public int ChoiceVote => Choice.Votes.Count;
 
 
         public PollChoiceListViewModel() { }

@@ -44,9 +44,9 @@
             <TextBox TextWrapping="Wrap" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Height="20" Grid.Column="1"/>
             <Label Grid.Row="1" Content="Type:"/>
             <ComboBox Grid.Row="1" Height="20" Margin="0,1,0,0" Grid.Column="1"
-                      SelectedItem="selected">
-                <ComboBoxItem>Single</ComboBoxItem>
-                <ComboBoxItem IsSelected="True">Multi</ComboBoxItem>
+    SelectedValue="{Binding PollType, Mode=TwoWay}" SelectedValuePath="Content">
+                <ComboBoxItem Content="Single" />
+                <ComboBoxItem Content="Multi" />
             </ComboBox>
             <Label Grid.Row="2" Content="Creator:"/>
             <Label Grid.Row="2" HorizontalAlignment="Left" Grid.Column="1" Margin="0,1,0,0" Content="{Binding Creator}"/>
