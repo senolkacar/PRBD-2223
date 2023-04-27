@@ -62,7 +62,7 @@ namespace MyPoll.ViewModel;
             RaisePropertyChanged(nameof(Editable));
         }
 
-        public bool Editable => !EditMode && !ParentEditMode && (UserConnected || IsAdmin);
+        public bool Editable => !EditMode && !ParentEditMode && !Poll.Closed && (UserConnected || IsAdmin);
         public bool ParentEditMode => _pollChoicesViewModel.EditMode;
 
         public bool UserConnected => Participant.Id == CurrentUser.Id;

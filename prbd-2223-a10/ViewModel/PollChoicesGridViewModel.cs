@@ -47,11 +47,11 @@ public class PollChoicesGridViewModel : ViewModelCommon {
         set {
             if (SetProperty(ref _pollClosed, value)) {
                 Poll.Closed = value;
+                RaisePropertyChanged(nameof(Poll));
             }
         }
     }
 
-    public bool IsClosed => PollClosed;
 
     private void AddCommentVisChanged() {
         RaisePropertyChanged(nameof(AddCommentVisibility));

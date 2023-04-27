@@ -17,7 +17,7 @@
     </UserControl.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Auto">
         <StackPanel Orientation="Vertical" Height="Auto" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Border CornerRadius="10" Background="Pink" Height="80" Width="350" HorizontalAlignment="Left" Margin="10" Visibility="{Binding IsClosed,Converter={StaticResource BoolToVisConverter}}">
+            <Border CornerRadius="10" Background="Pink" Height="80" Width="350" HorizontalAlignment="Left" Margin="10" Visibility="{Binding PollClosed,Converter={StaticResource BoolToVisConverter}}">
                 <DockPanel>
                     <Label Content="This poll has been closed!" VerticalAlignment="Center" FontWeight="Bold" FontSize="18" Padding="10"/>
                     <Button Content="Reopen" Command="{Binding ReOpen}" FontSize="20" FontWeight="Bold" Height="50" Margin="10"></Button>

@@ -153,8 +153,6 @@ public class CreateEditPollViewModel : ViewModelCommon {
         get => _editMode;
         set => SetProperty(ref _editMode, value);
     }
-
-    public bool ReOpenVisibility => IsClosed;
     public ICommand Save { get; set; }
     public ICommand Cancel { get; set; }
     public ICommand Delete { get; set; }
