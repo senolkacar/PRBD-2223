@@ -100,7 +100,13 @@ namespace MyPoll.ViewModel;
     }
 
     private void Delete() {
-        Participant.Votes.Clear();
+        var votesToDelete = from v in Participant.Votes
+                            join c in Context.Choices on v.ChoiceId equals c.Id
+                            where c.PollId == Poll.Id
+                            select v;
+        foreach (var vote in votesToDelete) {
+            Participant.Votes.Remove(vote);
+        }
         Context.SaveChanges();
         RefreshVotes(Poll);
     }
