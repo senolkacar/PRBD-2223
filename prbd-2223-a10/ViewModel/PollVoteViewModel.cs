@@ -4,20 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using FontAwesome6;
 using Microsoft.Extensions.Logging;
 using MyPoll.Model;
 using PRBD_Framework;
+using static MyPoll.App;
 
 namespace MyPoll.ViewModel;
     public class PollVoteViewModel : ViewModelCommon {
     private readonly User participant;
     private readonly Choice choice;
-    public PollVoteViewModel(User participant,Choice choice) {
+    private readonly List<Vote> originalVotes;
+    private readonly PollParticipantChoicesViewModel pollParticipantChoicesViewModel;
+
+    public PollVoteViewModel(User participant,Choice choice, PollParticipantChoicesViewModel pollParticipantChoicesViewModel) {
         this.participant = participant;
         this.choice = choice;
+        this.pollParticipantChoicesViewModel = pollParticipantChoicesViewModel;
+        PollType = choice.Poll.Type;
+        originalVotes = participant.Votes.ToList();
         HasVoted = participant.Votes.Any(v => v.ChoiceId == choice.Id);
         SelectedVoteType = (from v in Context.Votes
                             where v.ChoiceId == choice.Id && v.UserId == participant.Id
@@ -29,7 +37,7 @@ namespace MyPoll.ViewModel;
         VoteMaybe = new RelayCommand(() => SetMaybe());
         VoteNo = new RelayCommand(() => SetNo());
     }
-
+    public PollType PollType { get; set; }
     public User Participant => participant;
     public Choice Choice => choice;
     public Vote Votes { get; private set; }
@@ -57,25 +65,37 @@ namespace MyPoll.ViewModel;
         }
     }
 
-        public void SetYes() {
+    public void SetYes() {
+        if (pollParticipantChoicesViewModel != null) {
             SelectedVoteType = VoteType.Yes;
             HasVoted = !HasVoted;
             Votes.Type = VoteType.Yes;
-        }
 
-        public void SetMaybe() {
+            pollParticipantChoicesViewModel.ToggleChoiceSelection(this);
+        }
+    }
+
+    public void SetMaybe() {
+        if (pollParticipantChoicesViewModel != null) {
             SelectedVoteType = VoteType.Maybe;
             HasVoted = !HasVoted;
             Votes.Type = VoteType.Maybe;
+
+            pollParticipantChoicesViewModel.ToggleChoiceSelection(this);
+        }
     }
 
-        public void SetNo() {
+    public void SetNo() {
+        if (pollParticipantChoicesViewModel != null) {
             SelectedVoteType = VoteType.No;
             HasVoted = !HasVoted;
             Votes.Type = VoteType.No;
+
+            pollParticipantChoicesViewModel.ToggleChoiceSelection(this);
+        }
     }
-        
-        public ICommand VoteYes { get; set; }
+
+    public ICommand VoteYes { get; set; }
         public ICommand VoteMaybe { get; set; }
         public ICommand VoteNo { get; set; }
         private bool _hasVoted;
@@ -92,8 +112,8 @@ namespace MyPoll.ViewModel;
                 RaisePropertyChanged(nameof(MaybeVoteToolTip));
                 RaisePropertyChanged(nameof(NoVoteToolTip));
                  if (!value && participant.Votes.Any(v => v.ChoiceId == Choice.Id)) {
-                participant.Votes.Remove(Votes);
-            }
+                    participant.Votes.Remove(Votes);
+                }
             }
         }
 
@@ -123,8 +143,6 @@ namespace MyPoll.ViewModel;
             return Brushes.White;
         }
     }
-
-
     public EFontAwesomeIcon Icon => GetIcon();
     public Brush Color => GetColor();
     public Brush YesFgColor => HasVoted && SelectedVoteType == VoteType.Yes ? Brushes.Green : Brushes.LightGray;

@@ -38,6 +38,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
         NoChoice = IsNew ? "hidden" : ChoicesList.Count > 0 ? "visible" : "hidden";
         NoParticipant = IsNew ? "hidden" : Participants.Count() > 0 ? "visible" : "hidden";
         MyParticipation = Context.Participations.Any(p => p.UserId == CurrentUser.Id && p.PollId == Poll.Id) ? false : true;
+        ComboBoxVisibility = Poll.Type != PollType.Multi || !hasMultipleVotes;
         RemoveChoiceCMD = new RelayCommand<Choice>(RemoveChoice);
         SaveChoiceCMD = new RelayCommand(SaveChoice);
         Save = new RelayCommand(SaveAction, CanSaveAction);
@@ -152,6 +153,12 @@ public class CreateEditPollViewModel : ViewModelCommon {
         get => _editMode;
         set => SetProperty(ref _editMode, value);
     }
+
+    private bool _comboBoxVisibility;
+    public bool ComboBoxVisibility {
+        get => _comboBoxVisibility;
+        set => SetProperty(ref _comboBoxVisibility, value);
+    }
     public ICommand Save { get; set; }
     public ICommand Cancel { get; set; }
     public ICommand Delete { get; set; }
@@ -174,6 +181,8 @@ public class CreateEditPollViewModel : ViewModelCommon {
     public string Creator => IsNew ? CurrentUser?.FullName : Poll?.Creator?.FullName;
 
     public string PollName => IsNew ? "<New Poll>" : Poll?.Name;
+
+    public bool ReOpenVisibility => Poll.Closed;
 
 
     public List<User> GetParticipants() {
@@ -217,6 +226,10 @@ public class CreateEditPollViewModel : ViewModelCommon {
         set => SetProperty(ref _choiceIsModified, value);
     }
 
+    private bool hasMultipleVotes => Context.Votes
+        .Where(v => v.Choice.PollId == Poll.Id)
+        .Select(v => v.UserId)
+        .Count() > 1;
 
    private void AddUser() {
             if (SelectedUser != null) {
@@ -320,6 +333,7 @@ public class CreateEditPollViewModel : ViewModelCommon {
         Context.SaveChanges();
         NotifyColleagues(App.Polls.POLL_NAME_CHANGED, Poll);
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
+        RaisePropertyChanged();
     }
 
     private bool CanSaveAction() {

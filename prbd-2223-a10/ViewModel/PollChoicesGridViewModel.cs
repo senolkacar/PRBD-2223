@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MyPoll.Model;
 using PRBD_Framework;
+using static MyPoll.App;
 
 namespace MyPoll.ViewModel;
 public class PollChoicesGridViewModel : ViewModelCommon {
@@ -47,7 +48,6 @@ public class PollChoicesGridViewModel : ViewModelCommon {
         set {
             if (SetProperty(ref _pollClosed, value)) {
                 Poll.Closed = value;
-                RaisePropertyChanged(nameof(Poll));
             }
         }
     }
@@ -78,6 +78,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
     private void ReOpenPoll() {
         PollClosed = false;
         Context.SaveChanges();
+        NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
     }
 
 
@@ -142,7 +143,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
     }
 
     protected override void OnRefreshData() {
-
+        
     }
 
     public PollChoicesGridViewModel() {

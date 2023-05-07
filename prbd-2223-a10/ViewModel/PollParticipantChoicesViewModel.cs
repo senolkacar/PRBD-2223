@@ -76,7 +76,7 @@ namespace MyPoll.ViewModel;
 
     public void RefreshVotes(Poll poll) {
         PollVoteVM = poll.GetChoices()
-            .Select(c => new PollVoteViewModel(Participant,c))
+            .Select(c => new PollVoteViewModel(Participant,c,this))
             .ToList();
     }
 
@@ -109,6 +109,17 @@ namespace MyPoll.ViewModel;
         }
         Context.SaveChanges();
         RefreshVotes(Poll);
+    }
+
+    public void ToggleChoiceSelection(PollVoteViewModel selectedVoteVM) {
+        if (Poll.Type == PollType.Single) {
+            foreach (var voteVM in PollVoteVM) {
+                if (voteVM != selectedVoteVM) {
+                    voteVM.HasVoted = false;
+                    voteVM.Votes.Type = VoteType.None;
+                }
+            }
+        }
     }
 
 

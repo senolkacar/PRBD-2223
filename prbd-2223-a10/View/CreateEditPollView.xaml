@@ -13,9 +13,6 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
     </UserControl.Resources>
-    <!--<UserControl.DataContext>
-        <vm:CreateEditPollViewModel/>
-    </UserControl.DataContext>-->
     <StackPanel>
         <TextBlock Margin="10">
                 <Run FontWeight="Bold" FontSize="18" Text="{Binding PollName,Mode=OneWay}"/>
@@ -23,7 +20,7 @@
                 <Run Text="{Binding Creator,Mode=OneWay}" FontWeight="Bold"></Run>
                 <Run Text=")"></Run>
         </TextBlock>
-        <Border CornerRadius="10" Background="Pink" Height="80" Width="350" HorizontalAlignment="Left" Margin="10" Visibility="{Binding IsClosed,Converter={StaticResource BoolToVisConverter}}">
+        <Border CornerRadius="10" Background="Pink" Height="80" Width="350" HorizontalAlignment="Left" Margin="10" Visibility="{Binding ReOpenVisibility,Converter={StaticResource BoolToVisConverter}}">
             <DockPanel>
                 <Label Content="This poll has been closed!" VerticalAlignment="Center" FontWeight="Bold" FontSize="18" Padding="10"/>
                 <Button Content="Reopen" Command="{Binding ReOpen}" FontSize="20" FontWeight="Bold" Height="50" Margin="10"></Button>
@@ -44,7 +41,7 @@
             <TextBox TextWrapping="Wrap" Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Height="20" Grid.Column="1"/>
             <Label Grid.Row="1" Content="Type:"/>
             <ComboBox Grid.Row="1" Height="20" Margin="0,1,0,0" Grid.Column="1"
-    SelectedValue="{Binding PollType, Mode=TwoWay}" SelectedValuePath="Content">
+    SelectedValue="{Binding PollType, Mode=TwoWay}" SelectedValuePath="Content" IsEnabled="{Binding ComboBoxVisibility}">
                 <ComboBoxItem Content="Single" />
                 <ComboBoxItem Content="Multi" />
             </ComboBox>

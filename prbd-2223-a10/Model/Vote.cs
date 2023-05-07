@@ -4,7 +4,7 @@ using PRBD_Framework;
 namespace MyPoll.Model;
 
 public enum VoteType {
-    Yes, No, Maybe
+    Yes, No, Maybe, None
 }
 
 public class Vote : EntityBase<MyPollContext> {
