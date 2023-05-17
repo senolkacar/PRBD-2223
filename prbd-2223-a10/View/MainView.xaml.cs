@@ -40,7 +40,7 @@ public partial class MainView : WindowBase {
             var tab = tabControl.FindByTag(poll.Name);
             if (tab == null) {
                 // Tab does not exist, create a new tab with the CreateEditPollView
-                OpenTab(isNew ? "<New Poll>" : poll.Name, poll.Name, () => new CreateEditPollView(poll, isNew));
+                OpenTab("<New Poll>", "<New Poll>",() => new CreateEditPollView(poll, isNew));
             } else {
                 // Tab already exists, update its content to the CreateEditPollView
                 var createEditPollView = new CreateEditPollView(poll, isNew);

@@ -46,5 +46,13 @@
             </ListView.ItemTemplate>
         </ListView>
         <Button Grid.Row="3" Command="{Binding CreatePoll}" Content="New Poll" HorizontalAlignment="Left" Margin="10,10"></Button>
+        <DockPanel HorizontalAlignment="Right" Grid.Row="3">
+            <TextBlock Background="#cc424242" Width="50" Height="20" Margin="5"></TextBlock>
+            <TextBlock VerticalAlignment="Center" Margin="5">Unanswered</TextBlock>
+            <TextBlock Background="#cc024a1a" Width="50" Height="20" Margin="5"></TextBlock>
+            <TextBlock VerticalAlignment="Center" Margin="5">Answered</TextBlock>
+            <TextBlock Background="#ccec8787" Width="50" Height="20" Margin="5"></TextBlock>
+            <TextBlock VerticalAlignment="Center" Margin="5">Closed</TextBlock>
+        </DockPanel>
     </Grid>
 </f:UserControlBase>

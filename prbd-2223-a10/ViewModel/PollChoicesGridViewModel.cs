@@ -78,6 +78,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
     private void ReOpenPoll() {
         PollClosed = false;
         Context.SaveChanges();
+        RaisePropertyChanged(nameof(ReOpenButtonVisibility));
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
     }
 
