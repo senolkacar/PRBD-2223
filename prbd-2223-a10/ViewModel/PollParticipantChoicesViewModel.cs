@@ -104,10 +104,10 @@ public class PollParticipantChoicesViewModel : ViewModelCommon {
     }
 
     private void Delete() {
-        var votesToDelete = from v in Participant.Votes
+        var votesToDelete = (from v in Participant.Votes
                             join c in Context.Choices on v.ChoiceId equals c.Id
                             where c.PollId == Poll.Id
-                            select v;
+                            select v).ToList();
         foreach (var vote in votesToDelete) {
             Participant.Votes.Remove(vote);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using MyPoll.Model;
 using PRBD_Framework;
@@ -26,7 +27,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
         _participantVM = participants.Select(p => new PollParticipantChoicesViewModel(this, p, poll)).ToList();
         PollClosed = Poll.Closed;
         EditPoll = new RelayCommand(() => NotifyColleagues(App.Polls.POLL_EDIT, _poll));
-    }
+}
 
     private bool _editMode;
     public bool EditMode {
@@ -59,7 +60,9 @@ public class PollChoicesGridViewModel : ViewModelCommon {
 
     public ICommand ReOpen => new RelayCommand(() => ReOpenPoll());
 
-    public ICommand AddComment => new RelayCommand(() => AddCommentVisibility = true);
+    public ICommand AddComment => new RelayCommand(() => AddCommentClicked());
+
+    public ICommand DeleteComment => new RelayCommand<Comment>(RemoveComment);
 
     public ICommand EditPoll { get; set; }
 
@@ -78,18 +81,38 @@ public class PollChoicesGridViewModel : ViewModelCommon {
     private void ReOpenPoll() {
         PollClosed = false;
         Context.SaveChanges();
-        RaisePropertyChanged(nameof(ReOpenButtonVisibility));
+        RaisePropertyChanged(nameof(ReOpenButtonVisibility),nameof(AddCommentTitleVisibility));
         NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
     }
 
-
-    private void deletePoll() {
-        Poll.Delete();
-        NotifyColleagues(App.Polls.POLL_CHANGED,Poll);
-        NotifyColleagues(App.Polls.POLL_CLOSE_TAB, Poll);
+    private void AddCommentClicked() {
+        AddCommentVisibility = true;
+        RaisePropertyChanged(nameof(AddCommentTitleVisibility));
     }
 
+    private void RemoveComment(Comment comment) {
+        Context.Comments.Remove(comment);
+        Context.SaveChanges();
+        UpdateComments();
+    }
 
+    private void deletePoll() {
+        MessageBoxResult msgRes;
+        string msg = "Are you sure you want to delete this poll ? This action cannot be recovered!";
+        msgRes = MessageBox.Show(msg, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Information);
+        if (msgRes == MessageBoxResult.No) {
+            return;
+        } else {
+            Poll.Delete();
+            NotifyColleagues(App.Polls.POLL_CHANGED, Poll);
+            NotifyColleagues(App.Polls.POLL_CLOSE_TAB, Poll);
+        }
+       
+    }
+
+    public bool AddCommentTitleVisibility => !AddCommentVisibility && !PollClosed;
+
+    public bool DeleteCommentVisibility => IsAdmin || CurrentUser == Poll?.Creator;
     public string EditDeleteButtonVisibility => CurrentUser == Poll?.Creator || IsAdmin ? "visible" : "hidden";
 
     public bool ReOpenButtonVisibility => (CurrentUser == Poll?.Creator || IsAdmin) && PollClosed;
@@ -114,6 +137,7 @@ public class PollChoicesGridViewModel : ViewModelCommon {
         CommentTxt = "";
         UpdateComments();
         AddCommentVisibility = false;
+        RaisePropertyChanged(nameof(AddCommentTitleVisibility));
         }
     }
 
