@@ -58,8 +58,11 @@ namespace MyPoll.ViewModel {
         public override bool Validate() {
             ClearErrors();
             string pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+            var user = Context.Users.SingleOrDefault(u => u.Email == Email);
             if (!Regex.IsMatch(Email, pattern)) {
                 AddError(nameof(Email), "bad email format");
+            } else if (user != null) {
+                AddError(nameof(Email),"email already exists");
             }
             if (string.IsNullOrEmpty(Password)) {
                 AddError(nameof(Password), "required");
