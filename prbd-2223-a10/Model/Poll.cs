@@ -47,14 +47,17 @@ namespace MyPoll.Model;
         }
 
         public List<Choice> GetBestChoices() {
+        List<Choice> bestChoices = new List<Choice>();
         var choices = Context.Choices
-         .Where(c => c.PollId == Id)
+         .Where(c => c.PollId == Id && c.Votes.Count>0)
          .ToList();
-        var maxScore = choices.Max(c => c.Score);
-        var bestChoices = choices
-            .Where(c => c.Score == maxScore)
-            .OrderByDescending(c => c.Score)
-            .ToList();
+        if(choices.Count > 0) {
+            var maxScore = choices.Max(c => c.Score);
+            bestChoices = choices
+                .Where(c => c.Score == maxScore)
+                .OrderByDescending(c => c.Score)
+                .ToList();
+        }
         return bestChoices;
     }
         
