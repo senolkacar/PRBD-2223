@@ -3,6 +3,10 @@ This is a small Poll project where users can, create, participate, vote on choic
 This project is developped in C# with EntityFramework and MVVM architecture.
 ## Notes de version
 
+![Alt text](https://i.ibb.co/qmNWkLW/login.png)
+![Alt text](https://i.ibb.co/60HDKX2/polllist.png)
+![Alt text](https://i.ibb.co/B23G9k2/votes.png)
+
 ### Liste des bugs connus
 
   * bug 1
